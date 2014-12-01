@@ -16,7 +16,7 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
 
-#include "AnalysisDataFormats/TopObjects/interface/CATopJetTagInfo.h"
+#include "DataFormats/JetReco/interface/CATopJetTagInfo.h"
 
 using std::cout;
 using std::endl;

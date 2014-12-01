@@ -14,7 +14,7 @@
 #include "EgammaAnalysis/ElectronTools/interface/ElectronEffectiveArea.h"
 #include "LJMet/Com/interface/TopElectronSelector.h"
 
-#include "AnalysisDataFormats/TopObjects/interface/CATopJetTagInfo.h"
+#include "DataFormats/JetReco/interface/CATopJetTagInfo.h"
 #include "PhysicsTools/SelectorUtils/interface/PFElectronSelector.h"
 #include "PhysicsTools/SelectorUtils/interface/PFMuonSelector.h"
 

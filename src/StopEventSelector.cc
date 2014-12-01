@@ -660,7 +660,7 @@ bool StopEventSelector::operator()( edm::EventBase const & event, pat::strbitset
 	  double min_deltar = std::numeric_limits<double>::max();
 	  for (std::vector<edm::Ptr<pat::Jet> >::const_iterator _ijet = mvSelJets.begin();
 	       _ijet!=mvSelJets.end(); ++_ijet){
-	    min_deltar = std::min( min_deltar, reco::deltaR(*_imu, *(*_ijet)) );
+	    min_deltar = std::min( min_deltar, (double)reco::deltaR(*_imu, *(*_ijet)) );
 	  }
 	  if ( min_deltar>0.3 ){ }
 	  else break;

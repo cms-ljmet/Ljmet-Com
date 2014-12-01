@@ -32,5 +32,5 @@
 <export>
   <lib   name="1"/>
 </export>
-<flags   CXXFLAGS="-g -O0"/>
+<flags   CXXFLAGS="-g -O0 -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=delete-non-virtual-dtor -Wno-unused-variable -Wno-delete-non-virtual-dtor -Wno-unused-but-set-variable"/>
 
