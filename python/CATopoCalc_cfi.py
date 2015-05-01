@@ -4,3 +4,4 @@ JetSubCalc = cms.PSet(
                       debug             = cms.bool(False),
                       AK8slimmedJetColl = cms.InputTag("slimmedJetsAK8")
                       )
+

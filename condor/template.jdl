@@ -1,0 +1,12 @@
+universe = vanilla
+use_x509userproxy = true
+Executable = OUTPUT_DIR/PREFIX.csh
+Requirements   =  OpSys == "LINUX" && (Arch =="INTEL" || Arch =="x86_64")
+Should_Transfer_Files = YES
+WhenToTransferOutput = ON_EXIT
+Output = OUTPUT_DIR/PREFIX_$(cluster)_$(process).out
+Error  = OUTPUT_DIR/PREFIX_$(cluster)_$(process).err
+Log    = OUTPUT_DIR/PREFIX_$(cluster).log
++UseSL5 = False
+Arguments =  CMSSWBASE OUTPUT_DIR PREFIX $(process) $(cluster)
+Queue NJOBS
