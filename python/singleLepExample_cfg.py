@@ -71,7 +71,8 @@ process.event_selector = cms.PSet(
     # PV cuts
     pv_cut         = cms.bool(True),
     hbhe_cut       = cms.bool(True),
-    hbhe_cut_value = cms.string('Run1'),
+    hbheiso_cut    = cms.bool(True),
+    hbhe_cut_value = cms.string('Run2Loose'),
     csc_cut        = cms.bool(True),
     eesc_cut       = cms.bool(True),
     flag_tag       = cms.InputTag('TriggerResults::PAT'),
@@ -87,6 +88,7 @@ process.event_selector = cms.PSet(
     # muon cuts
     muon_cuts                = cms.bool(True),
     muon_selector            = cms.bool(True),
+    muon_selector_medium     = cms.bool(False),
     muon_reliso              = cms.double(0.12),
     muon_minpt               = cms.double(25.0),
     muon_maxeta              = cms.double(2.1),
