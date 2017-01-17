@@ -407,8 +407,16 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
     // Pruned, trimmed and filtered masses available
     std::vector<double> theJetAK8PrunedMass;
     std::vector<double> theJetAK8PrunedMassWtagUncerts;
-    std::vector<double> theJetAK8SoftDropMassWtagUncerts;
+    std::vector<double> theJetAK8PrunedMassWtagUncerts_JMSup;
+    std::vector<double> theJetAK8PrunedMassWtagUncerts_JMSdn;
+    std::vector<double> theJetAK8PrunedMassWtagUncerts_JMRup;
+    std::vector<double> theJetAK8PrunedMassWtagUncerts_JMRdn;
     std::vector<double> theJetAK8SoftDropMass;
+    std::vector<double> theJetAK8SoftDropMassWtagUncerts;
+    std::vector<double> theJetAK8SoftDropMassWtagUncerts_JMSup;
+    std::vector<double> theJetAK8SoftDropMassWtagUncerts_JMSdn;
+    std::vector<double> theJetAK8SoftDropMassWtagUncerts_JMRup;
+    std::vector<double> theJetAK8SoftDropMassWtagUncerts_JMRdn;
     
     // n-subjettiness variables tau1, tau2, and tau3 available
     std::vector<double> theJetAK8NjettinessTau1;
@@ -515,7 +523,11 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
 
       double unc = 1.0;
       double unc_pruned = 1.0;
+      double unc_pruned_up = 1.0;
+      double unc_pruned_dn = 1.0;
       double ptscale_pruned = 1.0;
+      double ptscale_pruned_up = 1.0;
+      double ptscale_pruned_dn = 1.0;
       
       if(useL2L3Mass){
 	edm::Handle<double> rhoHandle;
@@ -541,16 +553,15 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
 	  parameters.setRho(rho);
 	  double res = resolutionAK8.getResolution(parameters);
 	  Variation JERcentral = Variation::NOMINAL;
-	  Variation JERshifted = Variation::UP;
-	  if(JERdn) JERshifted = Variation::DOWN;	  
+	  Variation JERshifted = Variation::UP; // symmetric
 	  // JetWTagging TWiki: 80X JMR for pruned mass + nsubjettiness, resolution scale factor = 1.07
 	  // uncertainty is 10.3% within eta 2.5, JER #oplus 10.3% outside
 	  double factor_pruned = 0.07;
 	  double uncert = fabs(resolution_SF.getScaleFactor(parameters,JERcentral) - resolution_SF.getScaleFactor(parameters,JERshifted));
 	  double uncert_pruned = 0.103;
 	  if(fabs(l2l3jet.eta()) > 2.5) uncert_pruned = sqrt(uncert*uncert + 0.103*0.103);
-	  if(JERup) factor_pruned = factor_pruned + uncert_pruned;
-	  if(JERdn) factor_pruned = factor_pruned - uncert_pruned;
+	  double factor_pruned_up = factor_pruned + uncert_pruned;
+	  double factor_pruned_dn = factor_pruned - uncert_pruned;
 
 	  const reco::GenJet * genJet = l2l3jet.genJet();
 	  bool smeared = false;
@@ -559,7 +570,11 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
 	    double deltaR = reco::deltaR(genJet->p4(),l2l3jet.p4());	
 	    if (deltaR < 0.4 && deltaPt <= 3*l2l3jet.pt()*res){
 	      double deltapt_pruned = (l2l3jet.pt() - genJet->pt()) * factor_pruned;
+	      double deltapt_pruned_up = (l2l3jet.pt() - genJet->pt()) * factor_pruned_up;
+	      double deltapt_pruned_dn = (l2l3jet.pt() - genJet->pt()) * factor_pruned_dn;
 	      ptscale_pruned = max(0.0, (l2l3jet.pt() + deltapt_pruned) / l2l3jet.pt());
+	      ptscale_pruned_up = max(0.0, (l2l3jet.pt() + deltapt_pruned_up) / l2l3jet.pt());
+	      ptscale_pruned_dn = max(0.0, (l2l3jet.pt() + deltapt_pruned_dn) / l2l3jet.pt());
 	      smeared = true;
 	    }
 	  }
@@ -567,40 +582,31 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
 	    JERrand.SetSeed(abs(static_cast<int>(l2l3jet.phi()*1e4)));
 	    ptscale_pruned = max(0.0, JERrand.Gaus(l2l3jet.pt(),sqrt(factor_pruned*(factor_pruned+2))*res*l2l3jet.pt())/l2l3jet.pt());
 	  }
-	
-	  if (JECup || JECdn){
-	    // uncertainty in BaseEventSelector takes the corrected pT
-	    jecUnc->setJetEta(l2l3jet.eta());
-	    jecUnc->setJetPt(l2l3jet.pt());
-	    
-	    if (JECup) { 
-	      try{unc = jecUnc->getUncertainty(true);}
-	      catch(...){ // catch all exceptions. Jet Uncertainty tool throws when binning out of range
-		std::cout << mLegend << "WARNING! Exception thrown by JetCorrectionUncertainty!" << std::endl;
-		std::cout << mLegend << "WARNING! Jet/MET will remain uncorrected." << std::endl;
-		unc = 0.0;
-	      }	    
-	      unc_pruned = 1 + sqrt(unc*unc + 0.02*0.02);
-	      unc = 1 + unc; 
-	    }
-	    else { 
-	      try{unc = jecUnc->getUncertainty(false);}
-	      catch(...){
-		std::cout << mLegend << "WARNING! Exception thrown by JetCorrectionUncertainty!" << std::endl;
-		std::cout << mLegend << "WARNING! Jet/MET will remain uncorrected." << std::endl;
-		unc = 0.0;
-	      }
-	      unc_pruned = 1 - sqrt(unc*unc + 0.02*0.02);
-	      unc = 1 - unc; 
-	    }	  
+	  if (!smeared && factor_pruned_up>0) {
+	    JERrand.SetSeed(abs(static_cast<int>(l2l3jet.phi()*1e4)));
+	    ptscale_pruned_up = max(0.0, JERrand.Gaus(l2l3jet.pt(),sqrt(factor_pruned_up*(factor_pruned_up+2))*res*l2l3jet.pt())/l2l3jet.pt());
 	  }
+	  if (!smeared && factor_pruned_dn>0) {
+	    JERrand.SetSeed(abs(static_cast<int>(l2l3jet.phi()*1e4)));
+	    ptscale_pruned_dn = max(0.0, JERrand.Gaus(l2l3jet.pt(),sqrt(factor_pruned_dn*(factor_pruned_dn+2))*res*l2l3jet.pt())/l2l3jet.pt());
+	  }
+
+	  // JetWtagging TWiki: JMS scale factor = 1, uncertainty = sqrt(JESunc^2 + 0.02^2)
+	  jecUnc->setJetEta(l2l3jet.eta());
+	  jecUnc->setJetPt(l2l3jet.pt());
+	  unc = jecUnc->getUncertainty(true);
+	  unc_pruned_up = 1.0 + sqrt(unc*unc + 0.02*0.02);
+
+	  jecUnc->setJetEta(l2l3jet.eta());
+	  jecUnc->setJetPt(l2l3jet.pt());
+	  unc = jecUnc->getUncertainty(false);
+	  unc_pruned_dn = 1.0 - sqrt(unc*unc + 0.02*0.02);
 	}
 
-	if(corr*unc == 1.0) cout << "L2+L3 correction is 1.0" << endl;
+	if(corr == 1.0) cout << "L2+L3 correction is 1.0" << endl;
 	
-	thePrunedMass   = corr*unc*(double)l2l3jet.userFloat("ak8PFJetsCHSPrunedMass");
-	theSoftDropMass = corr*unc*(double)l2l3jet.userFloat("ak8PFJetsCHSSoftDropMass");
-	
+	thePrunedMass   = corr*(double)l2l3jet.userFloat("ak8PFJetsCHSPrunedMass");
+	theSoftDropMass = corr*(double)l2l3jet.userFloat("ak8PFJetsCHSSoftDropMass");	
       }else{
 	thePrunedMass   = (double)corrak8.userFloat("ak8PFJetsCHSPrunedMass");
 	theSoftDropMass = (double)corrak8.userFloat("ak8PFJetsCHSSoftDropMass");
@@ -635,10 +641,18 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
       theJetAK8CHadEFrac.push_back(corrak8.chargedHadronEnergyFraction());
       theJetAK8NHadEFrac.push_back(corrak8.neutralHadronEnergyFraction());
       
-      theJetAK8PrunedMass  .push_back(thePrunedMass);
-      theJetAK8SoftDropMass.push_back(theSoftDropMass);
-      theJetAK8PrunedMassWtagUncerts.push_back(thePrunedMass*ptscale_pruned*unc_pruned/unc);
-      theJetAK8SoftDropMassWtagUncerts.push_back(theSoftDropMass*ptscale_pruned*unc_pruned/unc);
+      theJetAK8PrunedMass  .push_back(thePrunedMass); // JEC only
+      theJetAK8SoftDropMass.push_back(theSoftDropMass); // JEC only
+      theJetAK8PrunedMassWtagUncerts.push_back(thePrunedMass*ptscale_pruned); // JEC+JMR
+      theJetAK8PrunedMassWtagUncerts_JMSup.push_back(thePrunedMass*ptscale_pruned*unc_pruned_up);
+      theJetAK8PrunedMassWtagUncerts_JMSdn.push_back(thePrunedMass*ptscale_pruned*unc_pruned_dn);
+      theJetAK8PrunedMassWtagUncerts_JMRup.push_back(thePrunedMass*ptscale_pruned_up*unc_pruned);
+      theJetAK8PrunedMassWtagUncerts_JMRdn.push_back(thePrunedMass*ptscale_pruned_dn*unc_pruned);
+      theJetAK8SoftDropMassWtagUncerts.push_back(theSoftDropMass*ptscale_pruned); // JEC+JMR
+      theJetAK8SoftDropMassWtagUncerts_JMSup.push_back(theSoftDropMass*ptscale_pruned*unc_pruned_up);
+      theJetAK8SoftDropMassWtagUncerts_JMSdn.push_back(theSoftDropMass*ptscale_pruned*unc_pruned_dn);
+      theJetAK8SoftDropMassWtagUncerts_JMRup.push_back(theSoftDropMass*ptscale_pruned_up*unc_pruned);
+      theJetAK8SoftDropMassWtagUncerts_JMRdn.push_back(theSoftDropMass*ptscale_pruned_dn*unc_pruned);
       
       theJetAK8NjettinessTau1.push_back(theNjettinessTau1);
       theJetAK8NjettinessTau2.push_back(theNjettinessTau2);
@@ -753,8 +767,16 @@ int JetSubCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * s
 
     SetValue("theJetAK8PrunedMass",   theJetAK8PrunedMass);
     SetValue("theJetAK8PrunedMassWtagUncerts",   theJetAK8PrunedMassWtagUncerts);
-    SetValue("theJetAK8SoftDropMassWtagUncerts",   theJetAK8SoftDropMassWtagUncerts);
+    SetValue("theJetAK8PrunedMassWtagUncerts_JMSup",   theJetAK8PrunedMassWtagUncerts_JMSup);
+    SetValue("theJetAK8PrunedMassWtagUncerts_JMSdn",   theJetAK8PrunedMassWtagUncerts_JMSdn);
+    SetValue("theJetAK8PrunedMassWtagUncerts_JMRup",   theJetAK8PrunedMassWtagUncerts_JMRup);
+    SetValue("theJetAK8PrunedMassWtagUncerts_JMRdn",   theJetAK8PrunedMassWtagUncerts_JMRdn);
     SetValue("theJetAK8SoftDropMass", theJetAK8SoftDropMass);
+    SetValue("theJetAK8SoftDropMassWtagUncerts",   theJetAK8SoftDropMassWtagUncerts);
+    SetValue("theJetAK8SoftDropMassWtagUncerts_JMSup",   theJetAK8SoftDropMassWtagUncerts_JMSup);
+    SetValue("theJetAK8SoftDropMassWtagUncerts_JMSdn",   theJetAK8SoftDropMassWtagUncerts_JMSdn);
+    SetValue("theJetAK8SoftDropMassWtagUncerts_JMRup",   theJetAK8SoftDropMassWtagUncerts_JMRup);
+    SetValue("theJetAK8SoftDropMassWtagUncerts_JMRdn",   theJetAK8SoftDropMassWtagUncerts_JMRdn);
     
     SetValue("theJetAK8NjettinessTau1", theJetAK8NjettinessTau1);
     SetValue("theJetAK8NjettinessTau2", theJetAK8NjettinessTau2);
