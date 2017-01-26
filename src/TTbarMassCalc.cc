@@ -348,8 +348,8 @@ int TTbarMassCalc::AnalyzeEvent(edm::EventBase const & event,
     SetValue("NBsFromTTbar",foundb1+foundb2);
     SetValue("NWdecaysFromTTbar",(4-WdecayJets)+WdecayCMatches+WdecayLMatches);
     SetValue("NExtraBs",extrab);
-    SetValue("NExtraBs",cjets-WdecayCMatches);
-    SetValue("NExtraBs",ljets-WdecayLMatches);
+    SetValue("NExtraCs",cjets-WdecayCMatches);
+    SetValue("NExtraLs",ljets-WdecayLMatches);
     SetValue("NTotalBs",bjets);
     SetValue("NCharm",cjets);
     SetValue("NLight",ljets);        
