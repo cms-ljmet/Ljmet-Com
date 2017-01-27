@@ -1213,12 +1213,18 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 
 	        // quality cuts
 	        if (fabs(_ijet->correctedJet(0).eta()) < 2.7 && (*jetSel_)( *_ijet, retJet ) ){ } 
-	        else if (fabs(_ijet->correctedJet(0).eta()) >= 2.7 && fabs(_ijet->correctedJet(0).eta()) < 3.0 &&
-			 (_ijet->correctedJet(0).neutralEmEnergyFraction() < 0.9 || _ijet->correctedJet(0).neutralMultiplicity() > 2)){ }
-	        else if (fabs(_ijet->correctedJet(0).eta()) >= 3.0 && 
-			 (_ijet->correctedJet(0).neutralEmEnergyFraction() < 0.9 || _ijet->correctedJet(0).neutralMultiplicity() > 10)){ }
+	        else if (fabs(_ijet->correctedJet(0).eta()) >= 2.7 && 
+			 fabs(_ijet->correctedJet(0).eta()) < 3.0 && 
+			 _ijet->correctedJet(0).neutralEmEnergyFraction() > 0.01 && 
+			 _ijet->correctedJet(0).neutralHadronEnergyFraction() < 0.98 &&
+			 _ijet->correctedJet(0).neutralMultiplicity() > 2
+			 ){ }
+		else if (fabs(_ijet->correctedJet(0).eta()) >= 3.0 && 
+			 _ijet->correctedJet(0).neutralEmEnergyFraction() < 0.9 && 
+			 _ijet->correctedJet(0).neutralMultiplicity() > 10
+			 ){ }
 	        else break; // fail 
-	
+
                 _passpf = true;
 
                 if ( jetP4.Pt() > mdPar["jet_minpt"] ){ }
