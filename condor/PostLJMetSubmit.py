@@ -7,8 +7,9 @@ import fileinput
 import commands
 
 rel_base = os.environ['CMSSW_BASE']
-cmssw = 'CMSSW_8_0_14'
-date = 'Jul13'
+cmssw = 'CMSSW_8_0_21'
+#date = 'Dec22'
+date = 'Jan06_Dilep'
 locdir = date+'_All'
 basedir = '/store/user/drankin/LJMet'
 indir = 'root://cmseos.fnal.gov/'+basedir+'/'+date
@@ -23,34 +24,39 @@ samples = [
     #'Data',
     #'WJets',
     'WJets_HT100to200',
-    'WJets_HT200to400',
-    'WJets_HT400to600',
-    'WJets_HT600to800',
-    'WJets_HT800to1200',
-    'WJets_HT1200to2500',
-    'WJets_HT2500toInf',
-    'TTbar',
-    'TTbar_scaleup',
-    'TTbar_scaledown',
-    'ZJets_M50',
-    'T_s',
-    'T_t',
-    'Tbar_t',
-    'T_tW',
-    'Tbar_tW',
+    #'WJets_HT200to400',
+    #'WJets_HT400to600',
+    #'WJets_HT600to800',
+    #'WJets_HT800to1200',
+    #'WJets_HT1200to2500',
+    #'WJets_HT2500toInf',
+    #'TTbar',
+    #'TTbar_scaleup',
+    #'TTbar_scaledown',
+    #'ZJets_M50',
+    #'ZJets_HT100to200',
+    #'ZJets_HT200to400',
+    #'ZJets_HT400to600',
+    #'ZJets_HT600to800',
+    #'ZJets_HT800to1200',
+    #'ZJets_HT1200to2500',
+    #'ZJets_HT2500toInf',
+    #'T_s',
+    #'T_t',
+    #'Tbar_t',
+    #'T_tW',
+    #'Tbar_tW',
     'WW',
     'WZ',
     'ZZ',
-#    'QCD_Pt_120to170',
-#    'QCD_Pt_170to300',
-#    'QCD_Pt_300to470',
-#    'QCD_Pt_470to600',
-#    'QCD_Pt_600to800',
-#    'QCD_Pt_800to1000',
-#    'QCD_Pt_1000to1400',
+    #'QCD_Pt_120to170',
+    #'QCD_Pt_170to300',
+    #'QCD_Pt_300to470',
+    #'QCD_Pt_470to600',
+    #'QCD_Pt_600to800',
+    #'QCD_Pt_800to1000',
+    #'QCD_Pt_1000to1400',
 ]
-
-samples = []
 
 rmasses = [
 '1000',
@@ -86,25 +92,43 @@ rmasses = [
 '4000',
 ]
 
-for i in rmasses:
+#for i in rmasses:
     #samples.extend(['Wprime'+i+'Right'])
-    samples.extend(['Wprime'+i+'Mix'])
-    samples.extend(['Wprime'+i+'Left'])
+    #samples.extend(['Wprime'+i+'Mix'])
+    #samples.extend(['Wprime'+i+'Left'])
 
 datalist = [
-'SingleElectron_Run2016B_PromptReco_v2',
-'SingleMuon_Run2016B_PromptReco_v2',
-'SingleElectron_Run2016C_PromptReco_v2',
-'SingleMuon_Run2016C_PromptReco_v2',
-'SingleElectron_Run2016D_PromptReco_v2',
-'SingleMuon_Run2016D_PromptReco_v2',
+#'SingleElectron_Run2016B_PromptReco_v2',
+#'SingleMuon_Run2016B_PromptReco_v2',
+#'SingleElectron_Run2016C_PromptReco_v2',
+#'SingleMuon_Run2016C_PromptReco_v2',
+#'SingleElectron_Run2016D_PromptReco_v2',
+#'SingleMuon_Run2016D_PromptReco_v2',
+'SingleElectron_Run2016B_23Sep2016_v3',
+'SingleElectron_Run2016C_23Sep2016_v1',
+'SingleElectron_Run2016D_23Sep2016_v1',
+'SingleElectron_Run2016E_23Sep2016_v1',
+'SingleElectron_Run2016F_23Sep2016_v1',
+'SingleElectron_Run2016G_23Sep2016_v1',
+'SingleElectron_Run2016H_PromptReco_v1',
+'SingleElectron_Run2016H_PromptReco_v2',
+'SingleElectron_Run2016H_PromptReco_v3',
+'SingleMuon_Run2016B_23Sep2016_v3',
+'SingleMuon_Run2016C_23Sep2016_v1',
+'SingleMuon_Run2016D_23Sep2016_v1',
+'SingleMuon_Run2016E_23Sep2016_v1',
+'SingleMuon_Run2016F_23Sep2016_v1',
+'SingleMuon_Run2016G_23Sep2016_v1',
+'SingleMuon_Run2016H_PromptReco_v1',
+'SingleMuon_Run2016H_PromptReco_v2',
+'SingleMuon_Run2016H_PromptReco_v3',
 ]
 
 systlist = [
-'_JESDOWN',
-'_JESUP',
-'_JERUP',
-'_JERDOWN',
+#'_JESDOWN',
+#'_JESUP',
+#'_JERUP',
+#'_JERDOWN',
 'NOM'
 ]
 
@@ -123,6 +147,8 @@ for i in range(len(samples)):
 
         condor_templ_file = open(rel_base+"/src/LJMet/Com/condor/PostLJMetcondor.templ")
         csh_templ_file    = open(rel_base+"/src/LJMet/Com/condor/PostLJMetcsh.templ")
+        print 'Processing',
+        print samples[i]
     
         localcondor = locdir+'/'+samples[i]+sys+".condor"
         if (sys=='NOM'): localcondor = locdir+'/'+samples[i]+".condor"
@@ -146,6 +172,7 @@ for i in range(len(samples)):
                 elif (samples[i] == 'Data'):
                     ida = 0
                     tmpstr = ''
+                    tmpstrx = ''
                     for dataname in datalist:
                         gooddata = 1
                         firstrun = commands.getstatusoutput('eos root://cmseos.fnal.gov ls '+basedir+'/'+date+'/'+dataname+'/ | grep "_0.root"')
@@ -159,9 +186,10 @@ for i in range(len(samples)):
                             tmpstr = tmpstr+'xrdcp -f root://cmseos.fnal.gov/'+basedir+'/'+date+'/'+dataname+'/'+dataname+'_'+str(gooddata)+'.root root://cmseos.fnal.gov/'+basedir+'/'+date+'/'+dataname+'/'+dataname+'_0.root\n'
                             tmpstr = tmpstr+'eosrm '+basedir+'/'+date+'/'+dataname+'/'+dataname+'_'+str(gooddata)+'.root\n'
                         tmpstr = tmpstr+'''hadd -f tmp_'''+str(ida)+'''.root `xrdfs root://cmseos.fnal.gov ls -u '''+basedir+'''/'''+date+'''/'''+dataname+'''/ | grep ".root"`\n'''
+                        #tmpstrx = tmpstrx + '\nxrdcp -f tmp_'+str(ida)+'.root root://cmseos.fnal.gov/'+eosdir+'/'
                         ida+=1
                     line=line.replace('HADD', tmpstr+'hadd -f tmp.root tmp_*.root')
-                    line=line.replace('XRDCP', 'xrdcp -f tmp.root root://cmseos.fnal.gov/'+eosdir+'/SingleLep.root')
+                    line=line.replace('XRDCP', 'xrdcp -f tmp.root root://cmseos.fnal.gov/'+eosdir+'/SingleLep.root'+tmpstrx)
                 else:
                     line=line.replace('HADD', '''hadd -f '''+samples[i]+'''_tmp.root `xrdfs root://cmseos.fnal.gov ls -u '''+basedir+'''/'''+date+'''/'''+samples[i]+'''/ | grep ".root"`''')
                     line=line.replace('XRDCP', 'xrdcp -f '+samples[i]+'_tmp.root root://cmseos.fnal.gov/'+eosdir+'/'+samples[i]+'.root')
