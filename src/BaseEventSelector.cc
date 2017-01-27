@@ -158,7 +158,7 @@ void BaseEventSelector::BeginJob(std::map<std::string, edm::ParameterSet const >
                 mvsPar["ElMVAweightFiles"].push_back("../weights/EIDmva_EE_10_oldNonTrigSpring15_ConvVarCwoBoolean_TMVA412_FullStatLowPt_PairNegWeightsGlobal_BDT.weights.xml");
             }
             if ( par[_key].exists("ElMVAweightFiles_alt") )
-                mvsPar["ElMVAweightFiles_alt"] = par[_key].getParameter<std::vector<std::string> >("ElMVAweightFiles");
+                mvsPar["ElMVAweightFiles_alt"] = par[_key].getParameter<std::vector<std::string> >("ElMVAweightFiles_alt");
             if (mvsPar["ElMVAweightFiles_alt"].size()!=3) {
                 mvsPar["ElMVAweightFiles_alt"].clear();
                 mvsPar["ElMVAweightFiles_alt"].push_back("../weights/electronID_mva_Spring16_GeneralPurpose_V1_EB1_10.weights.xml");

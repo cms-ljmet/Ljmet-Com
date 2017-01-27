@@ -553,6 +553,9 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
     std::vector <int>    elChargeConsistent;
     std::vector <int>    elIsEBEE;
     std::vector <int>    elCharge;
+    std::vector <int>    elGsfCharge;
+    std::vector <int>    elCtfCharge;
+    std::vector <int>    elScPixCharge;
 
     //ID requirement
     std::vector <double> elDeta;
@@ -660,7 +663,13 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
 
             elRelIso . push_back(relIso);
             elMiniIso . push_back(miniIso);
-            elCharge.push_back((*iel)->charge());
+
+	    //get three different charges
+	    elGsfCharge.push_back( (*iel)->gsfTrack()->charge());
+	    if( (*iel)->closestCtfTrackRef().isNonnull()) elCtfCharge.push_back((*iel)->closestCtfTrackRef()->charge());
+	    else elCtfCharge.push_back(-999);
+	    elScPixCharge.push_back((*iel)->scPixCharge());
+	    elCharge.push_back((*iel)->charge());
 
             //IP: for some reason this is with respect to the first vertex in the collection
             if(goodPVs.size() > 0){
@@ -744,6 +753,9 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
     SetValue("elDPhiSCTkAtVtx" , elDPhiSCTkAtVtx);
 
     SetValue("elCharge", elCharge);
+    SetValue("elGsfCharge", elGsfCharge);
+    SetValue("elCtfCharge", elCtfCharge);
+    SetValue("elScPixCharge", elScPixCharge);
     //Quality requirements
     SetValue("elRelIso" , elRelIso); //Isolation
     SetValue("elMiniIso" , elMiniIso); //Mini Isolation
@@ -890,14 +902,14 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
 	if(abs(rawJet.eta()) <= 2.7){
 	  looseJetID = (rawJet.neutralHadronEnergyFraction() < 0.99 && 
 			rawJet.neutralEmEnergyFraction() < 0.99 && 
-			(rawJet.chargedMultiplicity()+rawJet.neutralMultiplicity()) > 0) && 
+			(rawJet.chargedMultiplicity()+rawJet.neutralMultiplicity()) > 1) && 
 	    ((abs(rawJet.eta()) <= 2.4 && 
 	      rawJet.chargedHadronEnergyFraction() > 0 && 
 	      rawJet.chargedEmEnergyFraction() < 0.99 && 
 	      rawJet.chargedMultiplicity() > 0) || 
 	     abs(rawJet.eta()) > 2.4);
 	}else if(abs(rawJet.eta()) <= 3.0){
-	  looseJetID = rawJet.neutralEmEnergyFraction() < 0.9 && rawJet.neutralMultiplicity() > 2;
+	  looseJetID = rawJet.neutralEmEnergyFraction() > 0.01 && rawJet.neutralHadronEnergyFraction() < 0.98 && rawJet.neutralMultiplicity() > 2;
 	}else{
 	  looseJetID = rawJet.neutralEmEnergyFraction() < 0.9 && rawJet.neutralMultiplicity() > 10;
 	}
