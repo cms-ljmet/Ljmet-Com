@@ -693,8 +693,8 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
             elNotConversion.push_back((*iel)->passConversionVeto());
 
             if (UseElMVA) {
-                elMVAValue.push_back( selector->mvaValue(iel->operator*(),event) );
-                elMVAValue_alt.push_back( selector->mvaValue_alt(iel->operator*(),event) );
+                elMVAValue.push_back( selector->mvaValue_alt(iel->operator*(),event) );
+                elMVAValue_alt.push_back( selector->mvaValue(iel->operator*(),event) );
             }
 
             if(isMc && keepFullMChistory){
@@ -1495,6 +1495,7 @@ int singleLepCalc::findMatch(const reco::GenParticleCollection & genParticles, i
 
     for(size_t j = 0; j < genParticles.size(); ++ j) {
         const reco::GenParticle & p = (genParticles).at(j);
+        if (!(p.statusFlags().isPrompt())) continue;
         dRtmp = mdeltaR( eta, phi, p.eta(), p.phi());
         if ( dRtmp < closestDR && abs(p.pdgId()) == idToMatch){// && dRtmp < 0.3) {
             closestDR = dRtmp;

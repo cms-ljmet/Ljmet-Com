@@ -15,7 +15,7 @@ import sys
 
 
 #dirpre = 'Jan06_Dilep/'
-dirpre = 'Dec22/'
+dirpre = 'Jan27/'
 debug = False
 
 files = 0
@@ -30,7 +30,8 @@ badrootfiles = []
 for s in os.listdir(dirpre):
     print s
     #if (not s.endswith('UP') and not s.endswith('DOWN')): continue
-    if (not s.startswith('Single')): continue
+    #if (not s.startswith('Single')): continue
+    if (not s.startswith('Wprime')): continue
     #if (not s.startswith('TTbar_scale')): continue
     #if (not (s.startswith('WJets_HT100to200') or s.startswith('WW') or s.startswith('WZ') or s.startswith('ZZ'))): continue
     Dir=dirpre+s
@@ -132,8 +133,8 @@ for s in os.listdir(dirpre):
                 goodfiles = goodfiles + 1
 
     for i in range(len(badfilelist)):
-        #os.system('rm '+Dir+'/'+badfilelist[i]+'condor.log;')
-        #os.system('condor_submit '+Dir+'/'+badfilelist[i]+'condor;')
+        os.system('rm '+Dir+'/'+badfilelist[i]+'condor.log;')
+        os.system('condor_submit '+Dir+'/'+badfilelist[i]+'condor;')
         print 'File: ' + badfilelist[i] + 'condor resubmitted succesfully!'
     badfilelist=[]
 

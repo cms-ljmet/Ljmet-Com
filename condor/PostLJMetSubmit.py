@@ -8,8 +8,8 @@ import commands
 
 rel_base = os.environ['CMSSW_BASE']
 cmssw = 'CMSSW_8_0_21'
-#date = 'Dec22'
-date = 'Jan06_Dilep'
+date = 'Jan27'
+#date = 'Jan06_Dilep'
 locdir = date+'_All'
 basedir = '/store/user/drankin/LJMet'
 indir = 'root://cmseos.fnal.gov/'+basedir+'/'+date
@@ -21,19 +21,19 @@ eosdir = ''+basedir+'/'+date+'_All'
 #################################################
 
 samples = [
-    #'Data',
+    'Data',
     #'WJets',
     'WJets_HT100to200',
-    #'WJets_HT200to400',
-    #'WJets_HT400to600',
-    #'WJets_HT600to800',
-    #'WJets_HT800to1200',
-    #'WJets_HT1200to2500',
-    #'WJets_HT2500toInf',
-    #'TTbar',
-    #'TTbar_scaleup',
-    #'TTbar_scaledown',
-    #'ZJets_M50',
+    'WJets_HT200to400',
+    'WJets_HT400to600',
+    'WJets_HT600to800',
+    'WJets_HT800to1200',
+    'WJets_HT1200to2500',
+    'WJets_HT2500toInf',
+    'TTbar',
+    'TTbar_scaleup',
+    'TTbar_scaledown',
+    'ZJets_M50',
     #'ZJets_HT100to200',
     #'ZJets_HT200to400',
     #'ZJets_HT400to600',
@@ -41,22 +41,24 @@ samples = [
     #'ZJets_HT800to1200',
     #'ZJets_HT1200to2500',
     #'ZJets_HT2500toInf',
-    #'T_s',
-    #'T_t',
-    #'Tbar_t',
-    #'T_tW',
-    #'Tbar_tW',
+    'T_s',
+    'T_t',
+    'Tbar_t',
+    'T_tW',
+    'Tbar_tW',
     'WW',
     'WZ',
     'ZZ',
-    #'QCD_Pt_120to170',
-    #'QCD_Pt_170to300',
-    #'QCD_Pt_300to470',
-    #'QCD_Pt_470to600',
-    #'QCD_Pt_600to800',
-    #'QCD_Pt_800to1000',
-    #'QCD_Pt_1000to1400',
+    'QCD_Pt_120to170',
+    'QCD_Pt_170to300',
+    'QCD_Pt_300to470',
+    'QCD_Pt_470to600',
+    'QCD_Pt_600to800',
+    'QCD_Pt_800to1000',
+    'QCD_Pt_1000to1400',
 ]
+
+samples = []
 
 rmasses = [
 '1000',
@@ -92,10 +94,10 @@ rmasses = [
 '4000',
 ]
 
-#for i in rmasses:
+for i in rmasses:
     #samples.extend(['Wprime'+i+'Right'])
-    #samples.extend(['Wprime'+i+'Mix'])
-    #samples.extend(['Wprime'+i+'Left'])
+    samples.extend(['Wprime'+i+'Mix'])
+    samples.extend(['Wprime'+i+'Left'])
 
 datalist = [
 #'SingleElectron_Run2016B_PromptReco_v2',
@@ -108,27 +110,27 @@ datalist = [
 'SingleElectron_Run2016C_23Sep2016_v1',
 'SingleElectron_Run2016D_23Sep2016_v1',
 'SingleElectron_Run2016E_23Sep2016_v1',
-'SingleElectron_Run2016F_23Sep2016_v1',
+'SingleElectron_Run2016F_23Sep2016_v1_p1',
+'SingleElectron_Run2016F_23Sep2016_v1_p2',
 'SingleElectron_Run2016G_23Sep2016_v1',
-'SingleElectron_Run2016H_PromptReco_v1',
 'SingleElectron_Run2016H_PromptReco_v2',
 'SingleElectron_Run2016H_PromptReco_v3',
 'SingleMuon_Run2016B_23Sep2016_v3',
 'SingleMuon_Run2016C_23Sep2016_v1',
 'SingleMuon_Run2016D_23Sep2016_v1',
 'SingleMuon_Run2016E_23Sep2016_v1',
-'SingleMuon_Run2016F_23Sep2016_v1',
+'SingleMuon_Run2016F_23Sep2016_v1_p1',
+'SingleMuon_Run2016F_23Sep2016_v1_p2',
 'SingleMuon_Run2016G_23Sep2016_v1',
-'SingleMuon_Run2016H_PromptReco_v1',
 'SingleMuon_Run2016H_PromptReco_v2',
 'SingleMuon_Run2016H_PromptReco_v3',
 ]
 
 systlist = [
-#'_JESDOWN',
-#'_JESUP',
-#'_JERUP',
-#'_JERDOWN',
+'_JESDOWN',
+'_JESUP',
+'_JERUP',
+'_JERDOWN',
 'NOM'
 ]
 
