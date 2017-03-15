@@ -7,9 +7,10 @@ import fileinput
 import commands
 
 rel_base = os.environ['CMSSW_BASE']
-cmssw = 'CMSSW_8_0_21'
-date = 'Jan27'
-#date = 'Jan06_Dilep'
+cmssw = 'CMSSW_8_0_26_patch2'
+#date = 'Feb17'
+#date = 'Feb17_Dilep'
+date = 'Feb26_Tune'
 locdir = date+'_All'
 basedir = '/store/user/drankin/LJMet'
 indir = 'root://cmseos.fnal.gov/'+basedir+'/'+date
@@ -23,17 +24,17 @@ eosdir = ''+basedir+'/'+date+'_All'
 samples = [
     'Data',
     #'WJets',
-    'WJets_HT100to200',
-    'WJets_HT200to400',
-    'WJets_HT400to600',
-    'WJets_HT600to800',
-    'WJets_HT800to1200',
-    'WJets_HT1200to2500',
-    'WJets_HT2500toInf',
+    #'WJets_HT100to200',
+    #'WJets_HT200to400',
+    #'WJets_HT400to600',
+    #'WJets_HT600to800',
+    #'WJets_HT800to1200',
+    #'WJets_HT1200to2500',
+    #'WJets_HT2500toInf',
     'TTbar',
     'TTbar_scaleup',
     'TTbar_scaledown',
-    'ZJets_M50',
+    #'ZJets_M50',
     #'ZJets_HT100to200',
     #'ZJets_HT200to400',
     #'ZJets_HT400to600',
@@ -49,16 +50,18 @@ samples = [
     'WW',
     'WZ',
     'ZZ',
-    'QCD_Pt_120to170',
-    'QCD_Pt_170to300',
-    'QCD_Pt_300to470',
-    'QCD_Pt_470to600',
-    'QCD_Pt_600to800',
-    'QCD_Pt_800to1000',
-    'QCD_Pt_1000to1400',
+    #'QCD_Pt_120to170',
+    #'QCD_Pt_170to300',
+    #'QCD_Pt_300to470',
+    #'QCD_Pt_470to600',
+    #'QCD_Pt_600to800',
+    #'QCD_Pt_800to1000',
+    #'QCD_Pt_1000to1400',
+    'WJets_Pt100to250',
+    'WJets_Pt250to400',
+    'WJets_Pt400to600',
+    'WJets_Pt600toInf',
 ]
-
-samples = []
 
 rmasses = [
 '1000',
@@ -95,46 +98,41 @@ rmasses = [
 ]
 
 for i in rmasses:
-    #samples.extend(['Wprime'+i+'Right'])
+    samples.extend(['Wprime'+i+'Right'])
     samples.extend(['Wprime'+i+'Mix'])
     samples.extend(['Wprime'+i+'Left'])
 
 datalist = [
-#'SingleElectron_Run2016B_PromptReco_v2',
-#'SingleMuon_Run2016B_PromptReco_v2',
-#'SingleElectron_Run2016C_PromptReco_v2',
-#'SingleMuon_Run2016C_PromptReco_v2',
-#'SingleElectron_Run2016D_PromptReco_v2',
-#'SingleMuon_Run2016D_PromptReco_v2',
-'SingleElectron_Run2016B_23Sep2016_v3',
-'SingleElectron_Run2016C_23Sep2016_v1',
-'SingleElectron_Run2016D_23Sep2016_v1',
-'SingleElectron_Run2016E_23Sep2016_v1',
-'SingleElectron_Run2016F_23Sep2016_v1_p1',
-'SingleElectron_Run2016F_23Sep2016_v1_p2',
-'SingleElectron_Run2016G_23Sep2016_v1',
-'SingleElectron_Run2016H_PromptReco_v2',
-'SingleElectron_Run2016H_PromptReco_v3',
-'SingleMuon_Run2016B_23Sep2016_v3',
-'SingleMuon_Run2016C_23Sep2016_v1',
-'SingleMuon_Run2016D_23Sep2016_v1',
-'SingleMuon_Run2016E_23Sep2016_v1',
-'SingleMuon_Run2016F_23Sep2016_v1_p1',
-'SingleMuon_Run2016F_23Sep2016_v1_p2',
-'SingleMuon_Run2016G_23Sep2016_v1',
-'SingleMuon_Run2016H_PromptReco_v2',
-'SingleMuon_Run2016H_PromptReco_v3',
+'SingleElectron_Run2016B_03Feb2017_v3',
+'SingleElectron_Run2016C_03Feb2017_v1',
+'SingleElectron_Run2016D_03Feb2017_v1',
+'SingleElectron_Run2016E_03Feb2017_v1',
+'SingleElectron_Run2016F_03Feb2017_v1_p1',
+'SingleElectron_Run2016F_03Feb2017_v1_p2',
+'SingleElectron_Run2016G_03Feb2017_v1',
+'SingleElectron_Run2016H_03Feb2017_v2',
+'SingleElectron_Run2016H_03Feb2017_v3',
+'SingleMuon_Run2016B_03Feb2017_v3',
+'SingleMuon_Run2016C_03Feb2017_v1',
+'SingleMuon_Run2016D_03Feb2017_v1',
+'SingleMuon_Run2016E_03Feb2017_v1',
+'SingleMuon_Run2016F_03Feb2017_v1_p1',
+'SingleMuon_Run2016F_03Feb2017_v1_p2',
+'SingleMuon_Run2016G_03Feb2017_v1',
+'SingleMuon_Run2016H_03Feb2017_v2',
+'SingleMuon_Run2016H_03Feb2017_v3',
 ]
 
 systlist = [
-'_JESDOWN',
-'_JESUP',
-'_JERUP',
-'_JERDOWN',
+#'_JESDOWN',
+#'_JESUP',
+#'_JERUP',
+#'_JERDOWN',
 'NOM'
 ]
 
 #samples = ['Wprime3100Right','Wprime3200Right','Wprime3300Right','Wprime3400Right','Wprime3500Right','Wprime3600Right','Wprime3700Right','Wprime3800Right','Wprime3900Right','Wprime4000Right']
+samples = ['TTbar_old','TTbar_new']
 
 ### Write the files you wish to run over for each job    
 

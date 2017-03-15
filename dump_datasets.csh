@@ -1,6 +1,5 @@
 #!/bin/tcsh -f
 
-##foreach mass ( 3300 )
 #foreach mass ( 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000 3100 3200 3300 3400 3500 3600 3700 3800 3900 4000 )
 #  #echo "Dumping WprimeToTB_TToLep_M-${mass}_RH:"
 #  #eval das_client --query=\"file dataset=/WprimeToTB_TToLep_M-${mass}_RH_TuneCUETP8M1_13TeV-comphep-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM\" --format=plain --limit=0 > python/Samples_2016/WprimeToTB_TToLep_M_${mass}_RH_TuneCUETP8M1_13TeV_comphep_pythia8_RunIISummer16MiniAODv2_PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_v1_cff.txt 
@@ -33,23 +32,24 @@
 #foreach dataset ( TT_TuneCUETP8M2T4down_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 TT_TuneCUETP8M2T4up_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 )
 #foreach dataset ( WW_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WZ_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 ZZ_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1 )
 #foreach dataset ( WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1 WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext4-v1 WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1 WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext4-v1 WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1 WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1 WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1 )
-#   set tmp1 = `echo ${dataset} | sed 's/-/_/g'`
-#   set tmp2 = `echo ${tmp1} | sed 's/\//_/g'`
-#   echo "Dumping /${dataset}/MINIAODSIM:"
-#   eval das_client --query=\"file dataset=/${dataset}/MINIAODSIM\" --limit=0 > python/Samples_2016/${tmp2}_cff.txt 
-#  #eval das_client --query=\"file dataset=/${dataset}/MINIAODSIM\" --limit=0 > ${tmp2}_cff.txt 
-#   echo 'Done!'
-#end
+foreach dataset ( TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1 )
+   set tmp1 = `echo ${dataset} | sed 's/-/_/g'`
+   set tmp2 = `echo ${tmp1} | sed 's/\//_/g'`
+   echo "Dumping /${dataset}/MINIAODSIM:"
+   eval das_client --query=\"file dataset=/${dataset}/MINIAODSIM\" --limit=0 > python/Samples_2016/${tmp2}_cff.txt 
+  #eval das_client --query=\"file dataset=/${dataset}/MINIAODSIM\" --limit=0 > ${tmp2}_cff.txt 
+   echo 'Done!'
+end
 
 
 #foreach dataset ( Run2016B-PromptReco-v2 Run2016C-PromptReco-v2  Run2016D-PromptReco-v2)
 #foreach dataset ( Run2016B-23Sep2016-v3 Run2016C-23Sep2016-v1 Run2016D-23Sep2016-v1 Run2016E-23Sep2016-v1 Run2016F-23Sep2016-v1 Run2016G-23Sep2016-v1 Run2016H-PromptReco-v1 Run2016H-PromptReco-v2 Run2016H-PromptReco-v3 )
 #foreach dataset ( Run2016H-03Feb2017_ver3-v1 Run2016H-03Feb2017_ver2-v1 Run2016G-03Feb2017-v1 Run2016F-03Feb2017-v1 Run2016E-03Feb2017-v1 Run2016D-03Feb2017-v1 Run2016C-03Feb2017-v1 Run2016B-03Feb2017_ver2-v2 )
-foreach dataset ( Run2016B-03Feb2017_ver2-v2 )
-   set tmp = `echo ${dataset} | sed 's/-/_/g'`
-   echo "Dumping /SingleElectron/${dataset}/MINIAOD:"
-   eval das_client --query=\"file dataset=/SingleElectron/${dataset}/MINIAOD\" --limit=0 > python/Samples_2016/SingleElectron_${tmp}_cff.txt 
-   echo "Dumping /SingleMuon/${dataset}/MINIAOD:"
-   eval das_client --query=\"file dataset=/SingleMuon/${dataset}/MINIAOD\" --limit=0 > python/Samples_2016/SingleMuon_${tmp}_cff.txt 
-   echo 'Done!'
-end
+#foreach dataset ( Run2016B-03Feb2017_ver2-v2 )
+#   set tmp = `echo ${dataset} | sed 's/-/_/g'`
+#   echo "Dumping /SingleElectron/${dataset}/MINIAOD:"
+#   eval das_client --query=\"file dataset=/SingleElectron/${dataset}/MINIAOD\" --limit=0 > python/Samples_2016/SingleElectron_${tmp}_cff.txt 
+#   echo "Dumping /SingleMuon/${dataset}/MINIAOD:"
+#   eval das_client --query=\"file dataset=/SingleMuon/${dataset}/MINIAOD\" --limit=0 > python/Samples_2016/SingleMuon_${tmp}_cff.txt 
+#   echo 'Done!'
+#end

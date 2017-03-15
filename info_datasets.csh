@@ -1,7 +1,7 @@
 #!/bin/tcsh -f
 
-#foreach mass ( 3300 )
-foreach mass ( 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000 3100 3200 3300 3400 3500 3600 3700 3800 3900 4000 )
+foreach mass ( 3500 )
+#foreach mass ( 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000 2100 2200 2300 2400 2500 2600 2700 2800 2900 3000 3100 3200 3300 3400 3500 3600 3700 3800 3900 4000 )
 #   echo "Info for WprimeToTB_TToLep_M-${mass}_RH:"
 #   echo -n "\tnevents = "
 #   eval das_client --query=\"dataset=/WprimeToTB_TToLep_M-${mass}_RH_TuneCUETP8M1_13TeV-comphep-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM \| grep dataset.nevents\" --limit=0 >& tmpinfo_wpr${mass}_1.txt &

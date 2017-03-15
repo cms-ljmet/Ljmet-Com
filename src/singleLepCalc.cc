@@ -376,18 +376,24 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
 
     for (std::vector<edm::Ptr<pat::Muon> >::const_iterator imu = vSelMuons.begin(); imu != vSelMuons.end(); imu++) {
         //Protect against muons without tracks (should never happen, but just in case)
-        if ((*imu)->globalTrack().isNonnull() and (*imu)->globalTrack().isAvailable() and
-            (*imu)->innerTrack().isNonnull()  and (*imu)->innerTrack().isAvailable()){
+        //if ((*imu)->globalTrack().isNonnull() and (*imu)->globalTrack().isAvailable() and
+        //    (*imu)->innerTrack().isNonnull()  and (*imu)->innerTrack().isAvailable()){
+        //Protect against muons without inner tracks (should never happen, but just in case)
+        if ((*imu)->innerTrack().isNonnull()  and (*imu)->innerTrack().isAvailable()){
+            bool validGlob = (*imu)->globalTrack().isNonnull() && (*imu)->globalTrack().isAvailable();
 
 	    if ((*imu)->genParticle()!=0) {
 	        tmpLV.SetPtEtaPhiE((*imu)->genParticle()->pt(),(*imu)->genParticle()->eta(),(*imu)->genParticle()->phi(),(*imu)->genParticle()->energy());
                 vGenLep.push_back(tmpLV);
 	    }
 
-            bool goodGlob = (*imu)->isGlobalMuon() && 
+            bool goodGlob = false;
+            if (validGlob) {
+                if ((*imu)->isGlobalMuon() &&
                 (*imu)->globalTrack()->normalizedChi2() < 3 && 
                 (*imu)->combinedQuality().chi2LocalPosition < 12 && 
-                (*imu)->combinedQuality().trkKink < 20; 
+                (*imu)->combinedQuality().trkKink < 20) goodGlob = true;
+            }
             bool ismediummuon = (*imu)->isLooseMuon() &&
                 (*imu)->innerTrack()->validFraction() > 0.49 && 
                 (*imu)->segmentCompatibility() > (goodGlob ? 0.303 : 0.451); 
@@ -410,7 +416,8 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
 
             muGlobal.push_back(((*imu)->isGlobalMuon()<<2)+(*imu)->isTrackerMuon());
             //chi2
-            muChi2 . push_back((*imu)->globalTrack()->normalizedChi2());
+            if (validGlob) muChi2 . push_back((*imu)->globalTrack()->normalizedChi2());
+            else muChi2 . push_back(999999.);
             //Isolation
             double chIso  = (*imu)->userIsolation(pat::PfChargedHadronIso);
             double nhIso  = (*imu)->userIsolation(pat::PfNeutralHadronIso);
@@ -441,7 +448,8 @@ int singleLepCalc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector 
                 muDz  . push_back(-999);
             }
             //Numbers of hits
-            muNValMuHits       . push_back((*imu)->globalTrack()->hitPattern().numberOfValidMuonHits());
+            if (validGlob) muNValMuHits       . push_back((*imu)->globalTrack()->hitPattern().numberOfValidMuonHits());
+            else muNValMuHits       . push_back(-999999);
             muNMatchedStations . push_back((*imu)->numberOfMatchedStations());
             muNValPixelHits    . push_back((*imu)->innerTrack()->hitPattern().numberOfValidPixelHits());
             muNTrackerLayers   . push_back((*imu)->innerTrack()->hitPattern().trackerLayersWithMeasurement());

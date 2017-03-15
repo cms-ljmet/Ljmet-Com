@@ -14,8 +14,8 @@ import re
 import sys
 
 
-#dirpre = 'Jan06_Dilep/'
-dirpre = 'Jan27/'
+#dirpre = 'Feb17_Dilep/'
+dirpre = 'Feb17/'
 debug = False
 
 files = 0
@@ -31,8 +31,8 @@ for s in os.listdir(dirpre):
     print s
     #if (not s.endswith('UP') and not s.endswith('DOWN')): continue
     #if (not s.startswith('Single')): continue
-    if (not s.startswith('Wprime')): continue
-    #if (not s.startswith('TTbar_scale')): continue
+    #if (not s.startswith('Wprime')): continue
+    if (not s.startswith('Wprime3500Left')): continue
     #if (not (s.startswith('WJets_HT100to200') or s.startswith('WW') or s.startswith('WZ') or s.startswith('ZZ'))): continue
     Dir=dirpre+s
     for f in os.listdir(Dir):
