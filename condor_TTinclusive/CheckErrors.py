@@ -8,7 +8,7 @@ dir = sys.argv[1]
 print; print 'Checking', dir
 
 try:
-    opts, args = getopt.getopt(sys.argv[2:], "", ["verbose=", "resubmit=", "resub_num="])
+    opts, args = getopt.getopt(sys.argv[2:], "", ["verbose=", "resubmit=", "resub_num=", "cleanlogs="])
 except getopt.GetoptError as err:
     print str(err)
     sys.exit(1)
@@ -16,13 +16,14 @@ except getopt.GetoptError as err:
 verbose_level = 0
 resubmit = '0'
 resub_num = -2
-doNoLog = False
+cleanlogs = False
 
 for o, a in opts:
 	print o, a
 	if o == '--verbose': verbose_level = int(a)
 	if o == '--resubmit': resubmit = a
 	if o == '--resub_num': resub_num = int(a)
+	if o == '--cleanlogs': cleanlogs = bool(a)
 
 rootdir = '/eos/uscms/store/user/lpcljm/2018/'+dir.split('/')[-3]+'/'+dir.split('/')[-2]+'/'
 rootdir = rootdir.replace('_logs','')
@@ -43,7 +44,7 @@ kill_fail = 0
 fatal_fail = 0
 
 for folder in folders:
-        #if 'Bprime' not in folder: continue
+        if 'Tprime' in folder: continue
 	if verbose_level > 0:  print; print folder
 
         rootfiles = EOSlist_root_files(rootdir+folder)
@@ -112,6 +113,10 @@ for folder in folders:
                         if verbose_level > 1:
                             print '\tRUNNING:',file,' and JobIndex:',index
                         continue
+                    elif os.path.exists(dir + '/'+folder+'/'+file.replace('.jdl','.log')):
+                        if verbose_level > 2: 
+                            print '\tCLEANED:',file,' and JobIndex:',index
+                        continue
                     else:
                         if verbose_level > 0:
                             print '\tSUBMIT FAIL:',file,' and JobIndex:',index,' FIX MANUALLY!!'
@@ -168,6 +173,18 @@ for folder in folders:
                         if resub_num == -1 or resub_num == 1: resub_index.append(index)
                         continue
 		except: pass
+
+
+                ### OTHERWISE IT LOOKS GOOD, double check that it's done
+                if term and cleanlogs:
+                    if verbose_level == 3:
+                        print '\tCLEANING UP:',file,' and JobIndex:',index
+                    ## these files are the largest for most samples
+                    os.system('rm ' + dir + '/' + folder + '/' + folder.replace('/logfiles/','') + '_' + index + '.out')
+                    os.system('rm ' + dir + '/' + folder + '/' + folder.replace('/logfiles/','') + '_' + index + '.condor')
+                    ## and for ttbar these are full of messages
+                    if 'TTTo' in folder or 'Mtt' in folder:
+                        os.system('rm ' + dir + '/' + folder + '/' + folder.replace('/logfiles/','') + '_' + index + '.err')
 
 	if resub_index != []: print 'RESUBS:', resub_index
 	if resubmit != '1': continue
