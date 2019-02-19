@@ -983,8 +983,8 @@ void BestCalc::getJetValues( const pat::Jet& jet ){
   m_BESTvars["FWmoment3top"] = fwm_top[3];
   m_BESTvars["FWmoment4top"] = fwm_top[4];
   m_BESTvars["isotropytop"]   = eventShapes_top.isotropy();
-  m_BESTvars["sphericitytop"] = eventShapes_top.sphericity(2);
-  m_BESTvars["aplanaritytop"] = eventShapes_top.aplanarity(2);
+  m_BESTvars["sphericitytop"] = eventShapes_top.sphericity();
+  m_BESTvars["aplanaritytop"] = eventShapes_top.aplanarity();
   m_BESTvars["thrusttop"]     = thrustCalculator_top.thrust();
 
   // -- W values
@@ -993,8 +993,8 @@ void BestCalc::getJetValues( const pat::Jet& jet ){
   m_BESTvars["FWmoment3W"] = fwm_W[3];
   m_BESTvars["FWmoment4W"] = fwm_W[4];
   m_BESTvars["isotropyW"]   = eventShapes_W.isotropy();
-  m_BESTvars["sphericityW"] = eventShapes_W.sphericity(2);
-  m_BESTvars["aplanarityW"] = eventShapes_W.aplanarity(2);
+  m_BESTvars["sphericityW"] = eventShapes_W.sphericity();
+  m_BESTvars["aplanarityW"] = eventShapes_W.aplanarity();
   m_BESTvars["thrustW"]     = thrustCalculator_W.thrust();
 
   // -- Z values
@@ -1003,8 +1003,8 @@ void BestCalc::getJetValues( const pat::Jet& jet ){
   m_BESTvars["FWmoment3Z"] = fwm_Z[3];
   m_BESTvars["FWmoment4Z"] = fwm_Z[4];
   m_BESTvars["isotropyZ"]   = eventShapes_Z.isotropy();
-  m_BESTvars["sphericityZ"] = eventShapes_Z.sphericity(2);
-  m_BESTvars["aplanarityZ"] = eventShapes_Z.aplanarity(2);
+  m_BESTvars["sphericityZ"] = eventShapes_Z.sphericity();
+  m_BESTvars["aplanarityZ"] = eventShapes_Z.aplanarity();
   m_BESTvars["thrustZ"]     = thrustCalculator_Z.thrust();
 
   // -- H values
@@ -1013,8 +1013,8 @@ void BestCalc::getJetValues( const pat::Jet& jet ){
   m_BESTvars["FWmoment3H"] = fwm_H[3];
   m_BESTvars["FWmoment4H"] = fwm_H[4];
   m_BESTvars["isotropyH"]   = eventShapes_H.isotropy();
-  m_BESTvars["sphericityH"] = eventShapes_H.sphericity(2);
-  m_BESTvars["aplanarityH"] = eventShapes_H.aplanarity(2);
+  m_BESTvars["sphericityH"] = eventShapes_H.sphericity();
+  m_BESTvars["aplanarityH"] = eventShapes_H.aplanarity();
   m_BESTvars["thrustH"]     = thrustCalculator_H.thrust();
 
   return;
