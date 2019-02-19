@@ -43,7 +43,7 @@ process.load('LJMet.Com.singleLepCalc_cfi')
 process.singleLepCalc.isMc              = cms.bool(condorIsMC)
 process.singleLepCalc.keepFullMChistory = cms.bool(condorIsMC)
 process.singleLepCalc.UseElMVA          = cms.bool(True)
-process.singleLepCalc.UseElIDV1         = cms.bool(False)
+process.singleLepCalc.UseElIDV1         = cms.bool(True)
 process.singleLepCalc.saveLooseLeps     = cms.bool(False)
 process.singleLepCalc.saveGenHT     = cms.bool(True)
 process.singleLepCalc.OverrideLHEWeights = cms.bool(True)
@@ -64,7 +64,7 @@ process.event_selector = cms.PSet(
     
     # Define cuts -- variable names are strings searched by src/singleLepEventSelector.cc
     
-    debug  = cms.bool(False),
+    debug  = cms.bool(True),
     
     isMc  = cms.bool(condorIsMC),
     keepFullMChistory = cms.bool(condorIsMC),
@@ -155,7 +155,7 @@ process.event_selector = cms.PSet(
     loose_electron_minpt     = cms.double(10.0),
     loose_electron_maxeta    = cms.double(2.5),
     UseElMVA                 = cms.bool(True),
-    UseElIDV1                = cms.bool(False),
+    UseElIDV1                = cms.bool(True),
  
     # more lepton cuts
     min_lepton               = cms.int32(1),    # checks (N tight mu + N tight el) >= cut
@@ -184,9 +184,9 @@ process.event_selector = cms.PSet(
     trigger_collection       = cms.InputTag('TriggerResults::HLT'),
     pv_collection            = cms.InputTag('offlineSlimmedPrimaryVertices'),
     jet_collection           = cms.InputTag('slimmedJets'),
-    slimmedJetsAK8           = cms.InputTag('packedJetsAK8Puppi'), #'slimmedJetsAK8'),#
+    slimmedJetsAK8           = cms.InputTag('slimmedJetsAK8'),#'packedJetsAK8Puppi'), #
     muon_collection          = cms.InputTag('slimmedMuons'),
-    electron_collection      = cms.InputTag('slimmedElectrons::PATtest'), #'slimmedElectrons'), #
+    electron_collection      = cms.InputTag('slimmedElectrons'), #'slimmedElectrons::PATtest'), #
     tau_collection	     = cms.InputTag('slimmedTaus'),
     met_collection           = cms.InputTag('slimmedMETs'),
     
@@ -241,11 +241,12 @@ process.event_selector = cms.PSet(
 #
 
 process.inputs = cms.PSet (
-    nEvents    = cms.int32(200),
-    skipEvents = cms.int32(0),
+    nEvents    = cms.int32(100),
+    skipEvents = cms.int32(22300),
     lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange()),
     fileNames  = cms.vstring(
-        'test_deep_boosted_jet_MINIAODSIM.root',
+        #'test_deep_boosted_jet_MINIAODSIM.root',
+        'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAODv2/BprimeBprime_M-1000_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/00000/42313EDA-F08E-E811-B7B2-FA163E042BD9.root',
         #'root://cmsxrootd.fnal.gov//store/mc/RunIIFall17MiniAODv2/TprimeTprime_M-1800_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/PU2017_12Apr2018_94X_mc2017_realistic_v14-v2/80000/12A585B9-F46B-E811-A775-FA163EFD0C51.root',
         )
     )

@@ -14,15 +14,8 @@ import re
 import sys
 
 
-dirpre = 'Dec14/'
-debug = True
-
-
-#datasets = ['DoubleEG-Run2016B-23Sep2016-v3','DoubleEG-Run2016F-23Sep2016-v1','DoubleMuon-Run2016B-23Sep2016-v3','DoubleMuon-Run2016F-23Sep2016-v1','MuonEG-Run2016B-23Sep2016-v3','MuonEG-Run2016F-23Sep2016-v1
-#DoubleEG-Run2016C-23Sep2016-v1','DoubleEG-Run2016G-23Sep2016-v1','DoubleMuon-Run2016C-23Sep2016-v1','DoubleMuon-Run2016G-23Sep2016-v1','MuonEG-Run2016C-23Sep2016-v1','MuonEG-Run2016G-23Sep2016-v1
-#DoubleEG-Run2016D-23Sep2016-v1','DoubleEG-Run2016H-PromptReco-v2','DoubleMuon-Run2016D-23Sep2016-v1','DoubleMuon-Run2016H-PromptReco-v2','MuonEG-Run2016D-23Sep2016-v1','MuonEG-Run2016H-PromptReco-v2
-#DoubleEG-Run2016E-23Sep2016-v1','DoubleEG-Run2016H-PromptReco-v3','DoubleMuon-Run2016E-23Sep2016-v1','DoubleMuon-Run2016H-PromptReco-v3','MuonEG-Run2016E-23Sep2016-v1','MuonEG-Run2016H-PromptReco-v3']
-
+dirpre = 'Jul13/'
+debug = False
 
 files = 0
 rootfiles = 0
@@ -33,12 +26,8 @@ badfilelist = []
 badfileerror = []
 badrootfiles = []
 
-#setup grid proxy for safety
-os.system('voms-proxy-init -voms cms')
-
 for s in os.listdir(dirpre):
-
-    #print s
+    print s
     #if (not s.endswith('UP') and not s.endswith('DOWN')): continue
     #if (s.startswith('Single')): continue
     if (not (s.startswith('Wprime')) or ('Right' in s)): continue
@@ -69,7 +58,7 @@ for s in os.listdir(dirpre):
             file = open(Dir+"/"+f)
             good = True
             for line in file:
-                if line.find('Abort')>=0 and line.find('AbortGap')==-1: #don't count the list of trigger name that has abort gap in it
+                if line.find('Abort')>=0:
                     if badfilelist.count(f[:-6])==0:
                         if (debug): print line
                         badfiles = badfiles + 1
@@ -141,11 +130,11 @@ for s in os.listdir(dirpre):
             if good:
                 goodfiles = goodfiles + 1
 
-    #for i in range(len(badfilelist)):
-    #    os.system('rm '+Dir+'/'+badfilelist[i]+'condor.log;')
-    #    os.system('condor_submit '+Dir+'/'+badfilelist[i]+'condor;')
-    #    print 'File: ' + badfilelist[i] + 'condor resubmitted succesfully!'
-    #badfilelist=[]
+    for i in range(len(badfilelist)):
+        os.system('rm '+Dir+'/'+badfilelist[i]+'condor.log;')
+        os.system('condor_submit '+Dir+'/'+badfilelist[i]+'condor;')
+        print 'File: ' + badfilelist[i] + 'condor resubmitted succesfully!'
+    badfilelist=[]
 
 if ((goodfiles+badfiles)>files): sys.exit('ERROR: multiple return statements in condor log files, would have submitted duplicate jobs. Exiting...')
 
@@ -156,9 +145,9 @@ if unseccues == -1:
     unseccues = 0
 
 print 'Total number of files ran over = ', files
-#print 'Total number of root files found = ', rootfiles
-#print 'Number of files not returning a root file = ', unseccues
+print 'Total number of root files found = ', rootfiles
+print 'Number of files not returning a root file = ', unseccues
 print 'Number of files exited successfully = ', goodfiles
 print 'Number of files exited with an error = ', badfiles
 print '-------------------------------------'
-print badfilelist
+

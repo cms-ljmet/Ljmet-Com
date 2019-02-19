@@ -15,7 +15,7 @@ condorJSON = str('CONDOR_JSON')
 process.load('LJMet.Com.ljmet_cfi')
 process.ljmet.isMc = cms.bool(condorIsMC)
 
-# Exclude some unnecessary calculators from the process
+# Exclude some unnecessary calculators from the process                                                                                                                                         
 process.ljmet.excluded_calculators = cms.vstring(
     'PileUpCalc',
     'BTagSFCalc',
@@ -28,34 +28,30 @@ process.ljmet.excluded_calculators = cms.vstring(
     'ChargedHiggsCalc',
     'LjetsTopoCalc',
     'WprimeCalc'
-    ) 
+    )
 
 # common calculator options
 process.load('LJMet.Com.commonCalc_cfi')
 
-# singleLep calculator options
+# BestCalc options
+process.load('LJMet.Com.BestCalc_cfi')
+process.BestCalc.dnnFile = cms.string(relBase+'/src/LJMet/Com/data/BEST_mlp.json')
+
+# singleLep calculator options                                                                                                                                                                  
 process.load('LJMet.Com.singleLepCalc_cfi')
 process.singleLepCalc.isMc              = cms.bool(condorIsMC)
 process.singleLepCalc.keepFullMChistory = cms.bool(condorIsMC)
 process.singleLepCalc.UseElMVA          = cms.bool(True)
+process.singleLepCalc.UseElIDV1         = cms.bool(False)
 process.singleLepCalc.saveLooseLeps     = cms.bool(False)
-process.singleLepCalc.saveGenHT     = cms.bool(False)
+process.singleLepCalc.saveGenHT     = cms.bool(SAVEGENHT)
+process.singleLepCalc.OverrideLHEWeights = cms.bool(NEWPDF)
+process.singleLepCalc.triggerCollection = cms.InputTag("TriggerResults::HLT")
 
-# Jet substructure calculator options
+# Jet substructure calculator options                                                                                                                                                           
 process.load('LJMet.Com.JetSubCalc_cfi')
 process.JetSubCalc.killHF = cms.bool(False)
-process.JetSubCalc.doNewJEC = cms.bool(True)
-process.JetSubCalc.useL2L3Mass = cms.bool(True)
 process.JetSubCalc.isMc = cms.bool(condorIsMC)
-process.JetSubCalc.MCL2JetParAK8 = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L2Relative_AK8PFchs.txt')
-process.JetSubCalc.MCL3JetParAK8 = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt')
-process.JetSubCalc.MCPTResAK8 = cms.string(relBase+'/src/LJMet/Com/data/Spring16V10/Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt')
-process.JetSubCalc.MCSF = cms.string(relBase+'/src/LJMet/Com/data/Spring16V10/Spring16_25nsV10_MC_SF_AK4PFchs.txt')
-process.JetSubCalc.DataL2JetParAK8 = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L2Relative_AK8PFchs.txt')
-process.JetSubCalc.DataL3JetParAK8 = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L3Absolute_AK8PFchs.txt')
-process.JetSubCalc.DataL2L3JetParAK8 = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L2L3Residual_AK8PFchs.txt')
-process.JetSubCalc.UncertaintyAK8 = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_Uncertainty_AK8PFchs.txt')
-process.JetSubCalc.puppiCorrPath = cms.string(relBase+'/src/LJMet/Com/PuppiSoftdropMassCorr/weights/puppiCorr.root')
 
 ############################################################
 #
@@ -77,87 +73,68 @@ process.event_selector = cms.PSet(
     trigger_cut  = cms.bool(True),
     dump_trigger = cms.bool(False),
 
-    trigger_path_el = cms.vstring(
-        # 'HLT_Ele32_eta2p1_WPTight_Gsf_v1', 'HLT_Ele32_eta2p1_WPTight_Gsf_v2', 'HLT_Ele32_eta2p1_WPTight_Gsf_v3', 
-        # 'HLT_Ele32_eta2p1_WPTight_Gsf_v4', 'HLT_Ele32_eta2p1_WPTight_Gsf_v5', 'HLT_Ele32_eta2p1_WPTight_Gsf_v6', 
-        # 'HLT_Ele32_eta2p1_WPTight_Gsf_v7', 'HLT_Ele32_eta2p1_WPTight_Gsf_v8', 
-        # 'HLT_Ele32_WPTight_Gsf_v1', 'HLT_Ele32_WPTight_Gsf_v2', 'HLT_Ele32_WPTight_Gsf_v3', 
-        # 'HLT_Ele32_WPTight_Gsf_v4', 'HLT_Ele32_WPTight_Gsf_v5', 'HLT_Ele32_WPTight_Gsf_v6', 
-        # 'HLT_Ele32_WPTight_Gsf_v7', 'HLT_Ele32_WPTight_Gsf_v8', 
-        # 'HLT_Ele30_WPTight_Gsf_v1', 'HLT_Ele30_WPTight_Gsf_v2', 'HLT_Ele30_WPTight_Gsf_v3', 
-        # 'HLT_Ele27_WPTight_Gsf_v1', 'HLT_Ele27_WPTight_Gsf_v2', 'HLT_Ele27_WPTight_Gsf_v3', 
-        # 'HLT_Ele27_WPTight_Gsf_v4', 'HLT_Ele27_WPTight_Gsf_v5', 'HLT_Ele27_WPTight_Gsf_v6', 'HLT_Ele27_WPTight_Gsf_v7', 
-        # 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v1', 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v2', 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v3', 
-        # 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v4', 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v5', 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v6', 
-        # 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v7', 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v8', 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v9',
-        # 'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v10', 
-        # 'HLT_Ele15_IsoVVVL_PFHT350_v1', 'HLT_Ele15_IsoVVVL_PFHT350_v2', 'HLT_Ele15_IsoVVVL_PFHT350_v3',
-        # 'HLT_Ele15_IsoVVVL_PFHT350_v4', 'HLT_Ele15_IsoVVVL_PFHT350_v5', 'HLT_Ele15_IsoVVVL_PFHT350_v6',
-        # 'HLT_Ele15_IsoVVVL_PFHT400_v1', 'HLT_Ele15_IsoVVVL_PFHT400_v2', 'HLT_Ele15_IsoVVVL_PFHT400_v3',
-        # 'HLT_Ele15_IsoVVVL_PFHT400_v4', 'HLT_Ele15_IsoVVVL_PFHT400_v5', 'HLT_Ele15_IsoVVVL_PFHT400_v6',
-        # 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v3', 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v4',
-        # 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v5', 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v6',
-        # 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v7', 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v8', 
-        # 'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v9',
-        # 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v1', 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v2', 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v3',
-        # 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v4', 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v5', 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v6',
-        # 'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v7',
-        # 'HLT_PFHT900_v1', 'HLT_PFHT900_v2', 'HLT_PFHT900_v3', 'HLT_PFHT900_v4', 'HLT_PFHT900_v5', 'HLT_PFHT900_v6',
-        # 'HLT_PFHT600_v3', 'HLT_PFHT600_v4', 'HLT_PFHT600_v5', 'HLT_PFHT600_v6', 'HLT_PFHT600_v7', 'HLT_PFHT600_v8',
+    mctrigger_path_el = cms.vstring(
+        #'digitisation_step',
+        'HLT_Ele35_WPTight_Gsf',
+        'HLT_Ele38_WPTight_Gsf',
+        'HLT_Ele40_WPTight_Gsf',
+        'HLT_Ele28_eta2p1_WPTight_Gsf_HT150',
+        'HLT_Ele15_IsoVVVL_PFHT450_PFMET50',
+        'HLT_Ele15_IsoVVVL_PFHT450',
+        'HLT_Ele50_IsoVVVL_PFHT450',
+        'HLT_Ele15_IsoVVVL_PFHT600',
+        'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165',
+        'HLT_Ele115_CaloIdVT_GsfTrkIdT'
 
-        'HLT_Ele32_eta2p1_WPTight_Gsf_v',
-        'HLT_Ele32_WPTight_Gsf_v',
-        'HLT_Ele30_WPTight_Gsf_v',
-        'HLT_Ele27_WPTight_Gsf_v',
-        'HLT_Ele27_eta2p1_WPLoose_Gsf_HT200_v',
-        'HLT_Ele15_IsoVVVL_PFHT350_v',
-        'HLT_Ele15_IsoVVVL_PFHT400_v',
-        'HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50_v3',
-        'HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v',
-        'HLT_PFHT900_v',
+        'HLT_Ele32_WPTight_Gsf',
+        'HLT_Ele32_WPTight_Gsf_L1DoubleEG',
+        'HLT_Ele30_eta2p1_WPTight_Gsf_CentralPFJet35_EleCleaned',
         ),
-    trigger_path_mu = cms.vstring(
-        'HLT_IsoMu24_v1', 'HLT_IsoMu24_v2', 'HLT_IsoMu24_v3', 'HLT_IsoMu24_v4',
-        'HLT_IsoTkMu24_v1', 'HLT_IsoTkMu24_v2', 'HLT_IsoTkMu24_v3', 'HLT_IsoTkMu24_v4',
-        'HLT_IsoMu24_v3', 'HLT_IsoMu24_v4', 'HLT_IsoMu24_v5', 'HLT_IsoMu24_v6', 'HLT_IsoMu24_v7',
-        'HLT_IsoTkMu24_v3', 'HLT_IsoTkMu24_v4', 'HLT_IsoTkMu24_v5', 'HLT_IsoTkMu24_v6', 'HLT_IsoTkMu24_v7',         
-        'HLT_Mu50_v1', 'HLT_Mu50_v2', 'HLT_Mu50_v3', 'HLT_Mu50_v4', 'HLT_Mu50_v5',
-        'HLT_TkMu50_v1', 'HLT_TkMu50_v2', 'HLT_TkMu50_v3', 'HLT_TkMu50_v4', 'HLT_TkMu50_v5',
-        'HLT_Mu15_IsoVVVL_PFHT400_v1', 'HLT_Mu15_IsoVVVL_PFHT400_v2', 'HLT_Mu15_IsoVVVL_PFHT400_v3',
-        'HLT_Mu15_IsoVVVL_PFHT400_v4', 'HLT_Mu15_IsoVVVL_PFHT400_v5', 'HLT_Mu15_IsoVVVL_PFHT400_v6',
-        'HLT_Mu15_IsoVVVL_PFHT350_v1', 'HLT_Mu15_IsoVVVL_PFHT350_v2', 'HLT_Mu15_IsoVVVL_PFHT350_v3',
-        'HLT_Mu15_IsoVVVL_PFHT350_v4', 'HLT_Mu15_IsoVVVL_PFHT350_v5', 'HLT_Mu15_IsoVVVL_PFHT350_v6',
-        'HLT_Mu40_eta2p1_PFJet200_PFJet50_v1', 'HLT_Mu40_eta2p1_PFJet200_PFJet50_v2', 'HLT_Mu40_eta2p1_PFJet200_PFJet50_v3',
-        'HLT_Mu40_eta2p1_PFJet200_PFJet50_v4', 'HLT_Mu40_eta2p1_PFJet200_PFJet50_v5', 'HLT_Mu40_eta2p1_PFJet200_PFJet50_v6',
-        'HLT_Mu40_eta2p1_PFJet200_PFJet50_v7',
-        'HLT_PFHT900_v1', 'HLT_PFHT900_v2', 'HLT_PFHT900_v3', 'HLT_PFHT900_v4', 'HLT_PFHT900_v5', 'HLT_PFHT900_v6',
-        'HLT_PFHT600_v3', 'HLT_PFHT600_v4', 'HLT_PFHT600_v5', 'HLT_PFHT600_v6', 'HLT_PFHT600_v7', 'HLT_PFHT600_v8',
+
+    mctrigger_path_mu = cms.vstring(
+        #'digitisation_step',
+        'HLT_IsoMu24',
+        'HLT_IsoMu24_eta2p1',
+        'HLT_IsoMu27',
+        'HLT_IsoMu30',
+        'HLT_Mu50',
+        'HLT_TkMu50',
+        'HLT_Mu55',
+        'HLT_Mu15_IsoVVVL_PFHT450_PFMET50',
+        'HLT_Mu15_IsoVVVL_PFHT450',
+        'HLT_Mu50_IsoVVVL_PFHT450',
+        'HLT_Mu15_IsoVVVL_PFHT600',
+
+        'HLT_IsoTkMu24',
+        'HLT_IsoMu24_2p1',
         ),
-    
-    mctrigger_path_el = cms.vstring(''),
-    mctrigger_path_mu = cms.vstring(''),   
+
+    trigger_path_el = cms.vstring(''),
+    trigger_path_mu = cms.vstring(''),   
     
     # PV cuts
     pv_cut         = cms.bool(True),
-    flag_tag       = cms.InputTag('TriggerResults::RECO'),
+    flag_tag       = cms.InputTag('TriggerResults::PAT'),
     metfilters     = cms.bool(True),
     
     # Jet cuts
     jet_cuts                 = cms.bool(True),
-    jet_minpt                = cms.double(30.0),
-    jet_maxeta               = cms.double(2.4),
-    min_jet                  = cms.int32(2),
+    jet_minpt                = cms.double(20.0),
+    jet_maxeta               = cms.double(3.0),
+    jet_minpt_AK8            = cms.double(170.0),
+    jet_maxeta_AK8           = cms.double(2.4),
+    min_jet                  = cms.int32(1),
     max_jet                  = cms.int32(4000),
-    leading_jet_pt           = cms.double(50.0),
+    leading_jet_pt           = cms.double(20.0),
 
     # muon cuts
     muon_cuts                = cms.bool(True),
     min_muon                 = cms.int32(0),
-    muon_minpt               = cms.double(50.0),
+    muon_minpt               = cms.double(25.0),
     muon_maxeta              = cms.double(2.4),
     muon_useMiniIso          = cms.bool(True),
-    muon_miniIso             = cms.double(0.1),
-    loose_muon_miniIso       = cms.double(0.4),
+    muon_miniIso             = cms.double(999.9), #now using built-in flag
+    loose_muon_miniIso       = cms.double(999.9),
     loose_muon_minpt         = cms.double(10.0),
     loose_muon_maxeta        = cms.double(2.4),
     # specify IP cuts
@@ -169,7 +146,7 @@ process.event_selector = cms.PSet(
     # electron cuts
     electron_cuts            = cms.bool(True),
     min_electron             = cms.int32(0),
-    electron_minpt           = cms.double(50.0),
+    electron_minpt           = cms.double(25.0),
     electron_maxeta          = cms.double(2.5),
     electron_useMiniIso      = cms.bool(True),
     electron_miniIso         = cms.double(0.1),
@@ -177,23 +154,8 @@ process.event_selector = cms.PSet(
     loose_electron_minpt     = cms.double(10.0),
     loose_electron_maxeta    = cms.double(2.5),
     UseElMVA                 = cms.bool(True),
-    tight_electron_mva_cuts  = cms.vdouble(0.674,0.744,0.170), # 80X WP80 to recover efficiency of 74X WP80
-    loose_electron_mva_cuts  = cms.vdouble(-0.041,0.383,-0.515), # 80X WP90 to recover efficiency of 74X WP90
-    #tight_electron_mva_cuts  = cms.vdouble(0.967083,0.929117,0.726311), # ~80% el efficiency WP 74X
-    #loose_electron_mva_cuts  = cms.vdouble(0.913286,0.805013,0.358969), # ~90% el efficiency WP 74X
-
-    ElMVAweightFiles = cms.vstring(
-        relBase+'/src/LJMet/Com/weights/EIDmva_EB1_10_oldNonTrigSpring15_ConvVarCwoBoolean_TMVA412_FullStatLowPt_PairNegWeightsGlobal_BDT.weights.xml',
-        relBase+'/src/LJMet/Com/weights/EIDmva_EB2_10_oldNonTrigSpring15_ConvVarCwoBoolean_TMVA412_FullStatLowPt_PairNegWeightsGlobal_BDT.weights.xml',
-        relBase+'/src/LJMet/Com/weights/EIDmva_EE_10_oldNonTrigSpring15_ConvVarCwoBoolean_TMVA412_FullStatLowPt_PairNegWeightsGlobal_BDT.weights.xml',
-        ),
-
-    ElMVAweightFiles_alt = cms.vstring(
-        relBase+'/src/LJMet/Com/weights/electronID_mva_Spring16_GeneralPurpose_V1_EB1_10.weights.xml',
-        relBase+'/src/LJMet/Com/weights/electronID_mva_Spring16_GeneralPurpose_V1_EB2_10.weights.xml',
-        relBase+'/src/LJMet/Com/weights/electronID_mva_Spring16_GeneralPurpose_V1_EE_10.weights.xml',
-        ),
-
+    UseElIDV1                = cms.bool(False),
+ 
     # more lepton cuts
     min_lepton               = cms.int32(1),    # checks (N tight mu + N tight el) >= cut
     max_lepton               = cms.int32(1),    # checks (N tight mu + N tight el) <= cut
@@ -208,8 +170,10 @@ process.event_selector = cms.PSet(
     max_met                  = cms.double(99999999999.0),
     
     # Btagging cuts
-    btagOP                   = cms.string('CSVM'),
-    btag_min_discr           = cms.double(0.8484),
+    btagOP                   = cms.string('MEDIUM'),
+    bdisc_min                = cms.double(0.4941),
+    DeepCSVfile              = cms.string(relBase+'/src/LJMet/Com/data/DeepCSV_94XSF_V3_B_F.csv'),
+    DeepCSVSubjetfile        = cms.string(relBase+'/src/LJMet/Com/data/subjet_DeepCSV_94XSF_V3_B_F.csv'),
     btag_cuts                = cms.bool(False),
     btag_1                   = cms.bool(False),
     btag_2                   = cms.bool(False),
@@ -219,16 +183,17 @@ process.event_selector = cms.PSet(
     trigger_collection       = cms.InputTag('TriggerResults::HLT'),
     pv_collection            = cms.InputTag('offlineSlimmedPrimaryVertices'),
     jet_collection           = cms.InputTag('slimmedJets'),
+    slimmedJetsAK8           = cms.InputTag('packedJetsAK8Puppi'), #'slimmedJetsAK8'),#
     muon_collection          = cms.InputTag('slimmedMuons'),
-    electron_collection      = cms.InputTag('slimmedElectrons'),
+    electron_collection      = cms.InputTag('slimmedElectrons::PATtest'), #'slimmedElectrons'), #
     tau_collection	     = cms.InputTag('slimmedTaus'),
     met_collection           = cms.InputTag('slimmedMETs'),
     
     # Jet corrections are read from txt files which need updating!
-    JEC_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_Uncertainty_AK4PFchs.txt'),
-    JERSF_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Spring16V10/Spring16_25nsV10_MC_SF_AK4PFchs.txt'),
-    JER_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Spring16V10/Spring16_25nsV10_MC_PtResolution_AK4PFchs.txt'),
-    JERAK8_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Spring16V10/Spring16_25nsV10_MC_PtResolution_AK8PFchs.txt'),
+    JEC_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt'),
+    JERSF_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Fall17V3/Fall17_V3_MC_SF_AK4PFchs.txt'),
+    JER_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Fall17V3/Fall17_V3_MC_PtResolution_AK4PFchs.txt'),
+    JERAK8_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Fall17V3/Fall17_V3_MC_PtResolution_AK8PFPuppi.txt'),
 
     JECup                    = cms.bool(False),
     JECdown                  = cms.bool(False),
@@ -238,38 +203,36 @@ process.event_selector = cms.PSet(
     doLepJetCleaning         = cms.bool(True),
     CleanLooseLeptons        = cms.bool(False),
     LepJetDR                 = cms.double(0.4),
+    LepJetDRAK8              = cms.double(0.8),
     
-    MCL1JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L1FastJet_AK4PFchs.txt'),
-    MCL2JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L2Relative_AK4PFchs.txt'),
-    MCL3JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L3Absolute_AK4PFchs.txt'),
+    MCL1JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L1FastJet_AK4PFchs.txt'),
+    MCL2JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFchs.txt'),
+    MCL3JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L3Absolute_AK4PFchs.txt'),
 
-    MCL1JetParAK8            = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L1FastJet_AK8PFchs.txt'),
-    MCL2JetParAK8            = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L2Relative_AK8PFchs.txt'),
-    MCL3JetParAK8            = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016V3_MC_L3Absolute_AK8PFchs.txt'),
+    MCL1JetParAK8            = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L1FastJet_AK8PFPuppi.txt'),
+    MCL2JetParAK8            = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L2Relative_AK8PFPuppi.txt'),
+    MCL3JetParAK8            = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L3Absolute_AK8PFPuppi.txt'),
 
-    DataL1JetPar             = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L1FastJet_AK4PFchs.txt'),
-    DataL2JetPar             = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L2Relative_AK4PFchs.txt'),
-    DataL3JetPar             = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L3Absolute_AK4PFchs.txt'),
-    DataResJetPar            = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L2L3Residual_AK4PFchs.txt'),
+    DataL1JetPar             = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L1FastJet_AK4PFchs.txt'),
+    DataL2JetPar             = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L2Relative_AK4PFchs.txt'),
+    DataL3JetPar             = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L3Absolute_AK4PFchs.txt'),
+    DataResJetPar            = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L2L3Residual_AK4PFchs.txt'),
 
-    DataL1JetParAK8          = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L1FastJet_AK8PFchs.txt'),
-    DataL2JetParAK8          = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L2Relative_AK8PFchs.txt'),
-    DataL3JetParAK8          = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L3Absolute_AK8PFchs.txt'),
-    DataResJetParAK8         = cms.string(relBase+'/src/LJMet/Com/data/Summer16RRV3/Summer16_23Sep2016BCDV3_DATA_L2L3Residual_AK8PFchs.txt'),
-
+    DataL1JetParAK8          = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L1FastJet_AK8PFPuppi.txt'),
+    DataL2JetParAK8          = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L2Relative_AK8PFPuppi.txt'),
+    DataL3JetParAK8          = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L3Absolute_AK8PFPuppi.txt'),
+    DataResJetParAK8         = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017B_V32_DATA_L2L3Residual_AK8PFPuppi.txt'),
 
     # Unused parameters
     muon_reliso              = cms.double(0.2),
-    muon_selector            = cms.bool(False),
     muon_selector_medium     = cms.bool(False),
-    loose_muon_selector      = cms.bool(False),
     loose_muon_selector_tight = cms.bool(False),
     loose_muon_reliso        = cms.double(0.4),
-    electron_CutsPlusMVA     = cms.bool(False),
     BTagUncertUp             = cms.bool(False), # no longer needed
     BTagUncertDown           = cms.bool(False), # no longer needed
  
     )
+
 
 #######################################################
 #
@@ -280,7 +243,7 @@ process.inputs = cms.PSet (
     nEvents    = cms.int32(-1),
     skipEvents = cms.int32(0),
     lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange()),
-    fileNames  = cms.vstring(CONDOR_FILELIST)
+    fileNames  = cms.vstring('CONDOR_MEDIATOR')
     )
 
 
@@ -311,21 +274,3 @@ process.pvSelector.minNdof = cms.double(4.0)
 process.pvSelector.maxZ    = cms.double(24.0)
 process.pvSelector.maxRho  = cms.double(2.0)
 
-# jets
-process.load('PhysicsTools.SelectorUtils.pfJetIDSelector_cfi') 
-process.pfJetIDSelector.version = cms.string('FIRSTDATA')
-process.pfJetIDSelector.quality = cms.string('LOOSE')
-
-# Tight muon
-process.load('LJMet.Com.pfMuonSelector_cfi') #not used
-
-# Loose muon
-process.LoosepfMuonSelector = process.pfMuonSelector.clone() #not used
-
-# Tight electron for 25ns
-process.load('LJMet.Com.TopElectronSelector_cfi')
-process.TopElectronSelector.version = cms.string('NONE') #not used
-                   	       
-#Loose electron for 25ns
-process.LooseTopElectronSelector = process.TopElectronSelector.clone()
-process.LooseTopElectronSelector.version = cms.string('NONE') #not used

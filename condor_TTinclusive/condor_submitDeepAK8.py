@@ -74,7 +74,7 @@ else:
 
 relBase = os.environ['CMSSW_BASE']
 
-files = fileList 
+files = fileList
 
 if (not os.path.isfile(files)):
     print 'File with input root files '+ fileList +' not found. Please give absolute path'
@@ -94,11 +94,11 @@ tardir = outPath+outputdir[10:]
 if EOSpathExists(dir):
     print 'Output directory already exists!'
     sys.exit(1)
-else: 
+else:
     if dir[:4] == '/eos':
         print 'Making outputDir via eos command'
         os.system('eos root://cmseos.fnal.gov/ mkdir -p '+dir[10:])
-    else:        
+    else:
         os.system('mkdir -p '+dir)
 
 #mediatorDir = '/store/user/lpcljm/GenTTbarIdMiniAOD/'+prefix
@@ -112,7 +112,7 @@ else:
 #            os.system('eos root://cmseos.fnal.gov/ mkdir -p '+mediatorDir)
 #        else:
 #            os.system('mkdir -p '+dir)
-    
+
 if not EOSisfile(outputdir[10:]+'/'+tarfile.split('/')[-1]+'.tar'):
     print 'COPYING TAR TO EOS: '+tardir
     os.system('xrdcp -f '+tarfile+'.tar '+tardir+'/')
@@ -136,7 +136,7 @@ def get_input(num, list):
 j = 1
 nfiles = 1
 
-tempdir = '/uscms_data/d3/jmanagan/'+outputdir.split('/')[-1]+'_logs/'+shift+'/'+prefix
+tempdir = '/uscms_data/d3/yiting11/'+outputdir.split('/')[-1]+'_logs/'+shift+'/'+prefix
 if not os.path.exists(tempdir): os.makedirs(tempdir)
 
 print 'CONDOR work dir: '+tempdir
@@ -153,7 +153,7 @@ file_list.close()
 if shift == 'nominal': os.system('sed -e \'s/SETUP/'+setupString+'/g\' templateDeepAK8.sh > '+tempdir+'/'+prefix+'.sh')
 else: os.system('sed -e \'s/SETUP/'+setupString+'/g\' templateDeepAK8.sh > '+tempdir+'/'+prefix+'.sh')
 
-while ( nfiles <= count ):    
+while ( nfiles <= count ):
 
     # ADD YOUR CONFIG FILE HERE!!
     #Avoid calling the get_input function once per line in template
@@ -189,7 +189,7 @@ while ( nfiles <= count ):
     py_templ_file.close()
 
     jdl_templ_file = open(relBase+'/src/LJMet/Com/condor_TTinclusive/templateDeepAK8.jdl')
-    jdl_file       = open(tempdir+'/'+prefix+'_'+str(j)+'.jdl','w')    
+    jdl_file       = open(tempdir+'/'+prefix+'_'+str(j)+'.jdl','w')
     for line in jdl_templ_file:
         line=line.replace('PREFIX',     prefix)
         line=line.replace('JOBID',      str(j))
@@ -197,7 +197,7 @@ while ( nfiles <= count ):
         line=line.replace('INPUTTAR',   tarfile)
         line=line.replace('TAR_FILE',   tarfile.split('/')[-1])
         line=line.replace('TAR_DIR',    tardir)
-        jdl_file.write(line)        
+        jdl_file.write(line)
     jdl_file.close()
     jdl_templ_file.close()
 
@@ -210,7 +210,7 @@ if (submit):
     savedPath = os.getcwd()
     os.chdir(tempdir)
     print 'Submitting',njobs,'jobs!'
-    #proc = subprocess.Popen(['condor_submit', prefix+'_1.jdl'], stdout=subprocess.PIPE) 
+    #proc = subprocess.Popen(['condor_submit', prefix+'_1.jdl'], stdout=subprocess.PIPE)
     #(out, err) = proc.communicate()
     #if len(out) > 0: print "condor output:", out
 

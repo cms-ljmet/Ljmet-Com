@@ -1,7 +1,6 @@
 universe = vanilla
 Executable = DIRECTORY/PREFIX.csh
 Requirements   =  OpSys == "LINUX" && (Arch != "DUMMY")
-request_disk = 100000000
 Should_Transfer_Files = YES
 WhenToTransferOutput = ON_EXIT
 Output = DIRECTORY/PREFIX.stdout
@@ -9,5 +8,5 @@ Error = DIRECTORY/PREFIX.stderr
 Log = DIRECTORY/PREFIX.condor.log
 notification = Never
 use_x509userproxy = true
-x509userproxy = /tmp/x509up_u47334
+x509userproxy = /tmp/x509up_u47452
 Queue 1

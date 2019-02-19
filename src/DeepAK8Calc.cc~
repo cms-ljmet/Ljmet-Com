@@ -1,0 +1,222 @@
+#include <iostream>
+#include <algorithm>
+#include "LJMet/Com/interface/BaseCalc.h"
+#include "LJMet/Com/interface/LjmetFactory.h"
+#include "LJMet/Com/interface/LjmetEventContent.h"
+#include "TLorentzVector.h" 
+#include "DataFormats/Math/interface/deltaR.h"
+#include "LJMet/Com/interface/DeepAK8Calc.h"
+
+#include "LJMet/Com/interface/DeepAK8Calc.h"
+
+static int reg = LjmetFactory::GetInstance()->Register(new DeepAK8Calc(), "DeepAK8Calc");
+
+using namespace std;
+
+DeepAK8Calc::DeepAK8Calc(){
+
+}
+
+int DeepAK8Calc::BeginJob(){
+
+  if (mPset.exists("vertices"))              vertices = mPset.getParameter<edm::InputTag>("vertices");
+  else                                       vertices = edm::InputTag("offlineSlimmedPrimaryVertices");
+
+  if (mPset.exists("secVertices"))           secVertices = mPset.getParameter<edm::InputTag>("secVertices");
+  else                                       secVertices = edm::InputTag("slimmedSecondaryVertices");
+
+  if (mPset.exists("jets"))                  jets = mPset.getParameter<edm::InputTag>("jets");
+  else                                       jets = edm::InputTag("slimmedJets");
+
+  if (mPset.exists("pupInfo"))               pupInfo = mPset.getParameter<edm::InputTag>("pupInfo");
+  else                                       pupInfo = edm::InputTag("slimmedAddPileupInfo");
+
+  if (mPset.exists("rhoInfo"))               rhoInfo = mPset.getParameter<edm::InputTag>("rhoInfo");
+  else                                       rhoInfo = edm::InputTag("fixedGridRhoFastjetAll");
+
+  if (mPset.exists("SVs"))                   SVs = mPset.getParameter<edm::InputTag>("SVs");
+  else                                       SVs = edm::InputTag("slimmedSecondaryVertices");
+
+  if (mPset.exists("LooseSVs"))              LooseSVs = mPset.getParameter<edm::InputTag>("LooseSVs");
+  else                                       LooseSVs = edm::InputTag("inclusiveCandidateSecondaryVertices");
+
+  if (mPset.exists("genJetMatchWithNu"))     genJetMatchWithNu = mPset.getParameter<edm::InputTag>("genJetMatchWithNu");
+  else                                       genJetMatchWithNu = edm::InputTag("patGenJetMatchWithNu");
+
+  if (mPset.exists("genJetMatchRecluster"))  genJetMatchRecluster = mPset.getParameter<edm::InputTag>("genJetMatchRecluster");
+  else                                       genJetMatchRecluster = edm::InputTag("patGenJetMatchRecluster");
+
+  if (mPset.exists("pruned"))                pruned = mPset.getParameter<edm::InputTag>("pruned");
+  else                                       pruned = edm::InputTag("prunedGenParticles");
+
+  if (mPset.exists("fatjets"))               fatjets = mPset.getParameter<edm::InputTag>("fatjets");
+  else                                       fatjets = edm::InputTag("slimmedJetsAK8");
+
+  if (mPset.exists("muons"))                 muons = mPset.getParameter<edm::InputTag>("muons");
+  else                                       muons = edm::InputTag("slimmedMuons");
+
+  if (mPset.exists("electrons"))             electrons = mPset.getParameter<edm::InputTag>("electrons");
+  else                                       electrons = edm::InputTag("slimmedElectrons");
+
+  if (mPset.exists("candidates"))            candidates = mPset.getParameter<edm::InputTag>("candidates");
+  else                                       candidates = edm::InputTag("packedPFCandidates");
+
+  if (mPset.exists("jetR"))                  jetR = mPset.getParameter<double>("jetR");
+  else                                       jetR = 0;
+
+  if (mPset.exists("jetPtMin"))              jetPtMin = mPset.getParameter<double>("jetPtMin");
+  else                                       jetPtMin = 0;
+
+  if (mPset.exists("jetPtMax"))              jetPtMax = mPset.getParameter<double>("jetPtMax");
+  else                                       jetPtMax = 0;
+
+  if (mPset.exists("jetAbsEtaMin"))          jetAbsEtaMin = mPset.getParameter<double>("jetAbsEtaMin");
+  else                                       jetAbsEtaMin = 0;
+
+  if (mPset.exists("jetAbsEtaMax"))          jetAbsEtaMax = mPset.getParameter<double>("jetAbsEtaMax");
+  else                                       jetAbsEtaMax = 0;
+
+  if (mPset.exists("gluonReduction"))        gluonReduction = mPset.getParameter<double>("gluonReduction");
+  else                                       gluonReduction = 0;
+
+  if (mPset.exists("minCandidatePt"))        minCandidatePt = mPset.getParameter<double>("minCandidatePt");
+  else                                       minCandidatePt = 0;
+
+  if (mPset.exists("runFatJet"))             runFatJets_ = mPset.getParameter<bool>("runFatJet");
+  else                                       runFatJets_ = false;
+
+  if (mPset.exists("useHerwigCompatible"))   useHerwigCompatibleMatching = mPset.getParameter<bool>("useHerwigCompatible");
+  else                                       useHerwigCompatibleMatching = false;
+
+  if (mPset.exists("isHerwig"))              isHerwig = mPset.getParameter<bool>("isHerwig");
+  else                                       isHerwig = false;
+
+  if (mPset.exists("useOffsets"))            useoffsets = mPset.getParameter<bool>("useOffsets");
+  else                                       useoffsets = true;
+
+  if (mPset.exists("applySelection"))        applySelection_ = mPset.getParameter<bool>("applySelection");
+  else                                       applySelection_ = true;
+
+  if (mPset.exists("tagInfoName"))           tagInfoName = mPset.getParameter<std::string>("tagInfoName");
+  else                                       tagInfoName = "None";
+
+  if (mPset.exists("qgtagger"))              qgtagger = mPset.getParameter<std::string>("qgtagger");
+  else                                       qgtagger = "None";
+
+  if (mPset.exists("tagInfoFName"))          tagInfoFName = mPset.getParameter<std::string>("tagInfoFName");
+  else                                       tagInfoFName = "None";
+
+  if (mPset.exists("bDiscriminators"))       bDiscriminators = mPset.getParameter<std::vector<std::string>>("bDiscriminators");
+
+  ntuple_SV* svmodule = new ntuple_SV("", jetR);
+  addModule(svmodule, "SVNtuple");
+
+  ntuple_pfCands * pfcands = new ntuple_pfCands();
+  pfcands->setJetRadius(jetR);
+
+  addModule(pfcands, "pfcands");
+
+  addModule(new ntuple_bTagVars(), "bTagVars");
+
+  if(runFatJets_){
+    auto *fatjetinfo = new ntuple_FatJetInfo(jetR);
+    fatjetinfo->setGenParticleToken(consumes<reco::GenParticleCollection>(pruned));
+    fatjetinfo->setFatJetToken(consumes<pat::JetCollection>(fatjets));
+    addModule(fatjetinfo, "fatJets");
+  }
+
+  return 0;
+
+}
+
+
+int DeepAK8Calc::AnalyzeEvent(edm::EventBase const & event, BaseEventSelector * selector){
+
+  /*  //Get all AK8 jets (not just for W and Top)                                                                                                                                                               
+  edm::InputTag AK8JetColl = edm::InputTag("slimmedJetsAK8");
+  edm::Handle<std::vector<pat::Jet> > AK8Jets;
+  event.getByLabel(AK8JetColl, AK8Jets);
+
+  //Get all PF candidates                                                                                                                                                                                   
+  edm::Handle<pat::PackedCandidateCollection> packedPFCands;
+  event.getByLabel(packedPFCandsLabel_, packedPFCands);
+
+  //Four std::vector 
+
+  for (int i = 0; i < 60; i++)
+  std::cout << i << endl;*/
+
+  edm::Handle<reco::VertexCollection> vertices;
+  iEvent.getByToken(vtxToken_, vertices);
+  if (vertices->empty()) return; // skip the event if no PV found
+
+  edm::Handle<std::vector<reco::VertexCompositePtrCandidate> > secvertices;
+  iEvent.getByToken(svToken_, secvertices);
+
+  edm::Handle<std::vector<PileupSummaryInfo> > pupInfo;
+  iEvent.getByToken(puToken_, pupInfo);
+
+  edm::Handle<double> rhoInfo;
+  iEvent.getByToken(rhoToken_,rhoInfo);
+
+  /*  edm::Handle<edm::View<pat::Jet> > jets;
+      iEvent.getByToken(jetToken_, jets);*/
+
+  for(auto& m:modules_){
+    m->setPrimaryVertices(vertices.product());
+    m->setSecVertices(secvertices.product());
+    m->setPuInfo(pupInfo.product());
+    m->setRhoInfo(rhoInfo.product());
+    m->readEvent(event);
+  }
+
+  std::vector<size_t> indices(AK8jets->size());
+  for(size_t i=0;i<AK8jets->size();i++)
+    indices.at(i)=i;
+
+  //  if(applySelection_)
+  //  std::random_shuffle (indices.begin(),indices.end());
+
+  edm::View<pat::Jet>::const_iterator jetIter;
+  // loop over the jets
+  //for (edm::View<pat::Jet>::const_iterator jetIter = jets->begin(); jetIter != jets->end(); ++jetIter) {
+  for(size_t j=0;j<indices.size();j++){
+    njetstotal_++;
+    size_t jetidx=indices.at(j);
+    jetIter = AK8jets->begin()+jetidx;
+    const pat::Jet& jet = *jetIter;
+
+    if(jet.genJet())
+      njetswithgenjet_++;
+
+    bool writejet=true;
+    size_t idx = 0;
+    for(auto& m:modules_){
+      //std::cout << module_names_[idx] << std::endl;
+      if(! m->fillBranches(jet, jetidx, jets.product())){
+	writejet=false;
+	if(applySelection_) break;
+      }
+    idx++;
+    }
+    //std::cout << "Jet done" << std::endl;
+    /*if( (writejet&&applySelection_) || !applySelection_ ){
+      tree_->Fill();
+      njetsselected_++;
+      }*/
+  } // end of looping over the jets
+
+  return 0;
+
+}
+
+
+int DeepAK8Calc::EndJob()
+{
+
+  for(auto& m:modules_)
+    delete m;
+
+  return 0;
+
+}

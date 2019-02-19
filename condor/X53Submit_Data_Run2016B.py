@@ -14,7 +14,7 @@ import fileinput
 files_per_job = 1
 
 rel_base = os.environ['CMSSW_BASE']
-cmssw = 'CMSSW_8_0_22'
+cmssw = 'CMSSW_8_0_14'
 logdir = 'Aug19'
 #outdir = '/eos/uscms/store/user/lpctlbsm/clint/Fall15/25ns/'+logdir+'/'
 outdir = '/eos/uscms/store/user/clint/Run2016/'+logdir+'/'
@@ -31,7 +31,7 @@ DOQCDMC = 'False'
 DOTTBARSYS = 'False'
 
 ### JSON file to use
-MYJSON = "'../data/json/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON.txt'"
+MYJSON = "'../data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'"
 
 ### Systematics flags
 BTAGUNCERTUP = 'False'
