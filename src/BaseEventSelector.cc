@@ -169,7 +169,7 @@ void BaseEventSelector::BeginJob(std::map<std::string, edm::ParameterSet const >
 	msPar["DataResJetParByIOVAK8"] = msPar["DataResJetParAK8"];
 
 	if (par[_key].exists("DeepCSVfile")) msPar["DeepCSVfile"] = par[_key].getParameter<std::string> ("DeepCSVfile");
-	else msPar["DeepCSVfile"] = "data/DeepCSV_94XSF_v3_B_F.csv";
+	else msPar["DeepCSVfile"] = "data/DeepCSV_102XSF_V1.csv";
 	if (par[_key].exists("DeepCSVSubjetfile")) msPar["DeepCSVSubjetfile"] = par[_key].getParameter<std::string> ("DeepCSVSubjetfile");
 	else msPar["DeepCSVSubjetfile"] = "data/subjet_DeepCSV_94XSF_v3_B_F.csv";
 

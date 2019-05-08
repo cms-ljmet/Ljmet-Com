@@ -15,7 +15,7 @@ condorJSON = str('CONDOR_JSON')
 process.load('LJMet.Com.ljmet_cfi')
 process.ljmet.isMc = cms.bool(condorIsMC)
 
-# Exclude some unnecessary calculators from the process                                                                                                                                         
+# Exclude some unnecessary calculators from the process
 process.ljmet.excluded_calculators = cms.vstring(
     'PileUpCalc',
     'BTagSFCalc',
@@ -37,7 +37,7 @@ process.load('LJMet.Com.commonCalc_cfi')
 process.load('LJMet.Com.BestCalc_cfi')
 process.BestCalc.dnnFile = cms.string(relBase+'/src/LJMet/Com/data/BEST_mlp.json')
 
-# singleLep calculator options                                                                                                                                                                  
+# singleLep calculator options
 process.load('LJMet.Com.singleLepCalc_cfi')
 process.singleLepCalc.isMc              = cms.bool(condorIsMC)
 process.singleLepCalc.keepFullMChistory = cms.bool(condorIsMC)
@@ -48,7 +48,7 @@ process.singleLepCalc.saveGenHT     = cms.bool(SAVEGENHT)
 process.singleLepCalc.OverrideLHEWeights = cms.bool(NEWPDF)
 process.singleLepCalc.triggerCollection = cms.InputTag("TriggerResults::HLT")
 
-# Jet substructure calculator options                                                                                                                                                           
+# Jet substructure calculator options
 process.load('LJMet.Com.JetSubCalc_cfi')
 process.JetSubCalc.killHF = cms.bool(False)
 process.JetSubCalc.isMc = cms.bool(condorIsMC)
@@ -58,17 +58,17 @@ process.JetSubCalc.isMc = cms.bool(condorIsMC)
 # Event selector options
 #
 process.event_selector = cms.PSet(
-    
+
     selection = cms.string('singleLepSelector'),
-    
+
     # Define cuts -- variable names are strings searched by src/singleLepEventSelector.cc
-    
+
     debug  = cms.bool(False),
-    
+
     isMc  = cms.bool(condorIsMC),
     keepFullMChistory = cms.bool(condorIsMC),
     doLaserCalFilt  = cms.bool(False),
-    
+
     # Trigger cuts
     trigger_cut  = cms.bool(True),
     dump_trigger = cms.bool(False),
@@ -110,13 +110,13 @@ process.event_selector = cms.PSet(
         ),
 
     trigger_path_el = cms.vstring(''),
-    trigger_path_mu = cms.vstring(''),   
-    
+    trigger_path_mu = cms.vstring(''),
+
     # PV cuts
     pv_cut         = cms.bool(True),
     flag_tag       = cms.InputTag('TriggerResults::PAT'),
     metfilters     = cms.bool(True),
-    
+
     # Jet cuts
     jet_cuts                 = cms.bool(True),
     jet_minpt                = cms.double(20.0),
@@ -155,7 +155,7 @@ process.event_selector = cms.PSet(
     loose_electron_maxeta    = cms.double(2.5),
     UseElMVA                 = cms.bool(True),
     UseElIDV1                = cms.bool(False),
- 
+
     # more lepton cuts
     min_lepton               = cms.int32(1),    # checks (N tight mu + N tight el) >= cut
     max_lepton               = cms.int32(1),    # checks (N tight mu + N tight el) <= cut
@@ -163,22 +163,22 @@ process.event_selector = cms.PSet(
     max_loose_lepton         = cms.int32(1000),
     second_lepton_veto       = cms.bool(True),  #checks (N tight lep > 0) AND (N loose lep > 0), vetoes if there are loose leptons.
     tau_veto		     = cms.bool(False),
-    
+
     # MET cuts
     met_cuts                 = cms.bool(True),
     min_met                  = cms.double(30.0),
     max_met                  = cms.double(99999999999.0),
-    
+
     # Btagging cuts
     btagOP                   = cms.string('MEDIUM'),
     bdisc_min                = cms.double(0.4941),
-    DeepCSVfile              = cms.string(relBase+'/src/LJMet/Com/data/DeepCSV_94XSF_V3_B_F.csv'),
+    DeepCSVfile              = cms.string(relBase+'/src/LJMet/Com/data/DeepCSV_102XSF_V1.csv'),
     DeepCSVSubjetfile        = cms.string(relBase+'/src/LJMet/Com/data/subjet_DeepCSV_94XSF_V3_B_F.csv'),
     btag_cuts                = cms.bool(False),
     btag_1                   = cms.bool(False),
     btag_2                   = cms.bool(False),
     btag_3                   = cms.bool(False),
-    
+
     # Define the branch names of object collections in the input miniAOD file
     trigger_collection       = cms.InputTag('TriggerResults::HLT'),
     pv_collection            = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -188,7 +188,7 @@ process.event_selector = cms.PSet(
     electron_collection      = cms.InputTag('slimmedElectrons::PATtest'), #'slimmedElectrons'), #
     tau_collection	     = cms.InputTag('slimmedTaus'),
     met_collection           = cms.InputTag('slimmedMETs'),
-    
+
     # Jet corrections are read from txt files which need updating!
     JEC_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt'),
     JERSF_txtfile = cms.string(relBase+'/src/LJMet/Com/data/Fall17V3/Fall17_V3_MC_SF_AK4PFchs.txt'),
@@ -204,7 +204,7 @@ process.event_selector = cms.PSet(
     CleanLooseLeptons        = cms.bool(False),
     LepJetDR                 = cms.double(0.4),
     LepJetDRAK8              = cms.double(0.8),
-    
+
     MCL1JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L1FastJet_AK4PFchs.txt'),
     MCL2JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L2Relative_AK4PFchs.txt'),
     MCL3JetPar               = cms.string(relBase+'/src/LJMet/Com/data/Fall17V32/Fall17_17Nov2017_V32_MC_L3Absolute_AK4PFchs.txt'),
@@ -230,7 +230,7 @@ process.event_selector = cms.PSet(
     loose_muon_reliso        = cms.double(0.4),
     BTagUncertUp             = cms.bool(False), # no longer needed
     BTagUncertDown           = cms.bool(False), # no longer needed
- 
+
     )
 
 
@@ -252,8 +252,8 @@ if (not process.ljmet.isMc==cms.bool(True)):
     JsonFile = relBase+'/src/LJMet/Com/data/json/'+condorJSON
     myList   = LumiList.LumiList(filename=JsonFile).getCMSSWString().split(',')
     process.inputs.lumisToProcess.extend(myList)
-    
-    
+
+
 #######################################################
 #
 # Output
