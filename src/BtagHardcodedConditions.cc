@@ -62,41 +62,45 @@ float BtagHardcodedConditions::getDiscriminant(const std::string & op)
 
 double BtagHardcodedConditions::GetBtagEfficiency(double pt, double eta, std::string tagger)
 {
-  // Efficiencies from TTToSemiLeptonic powheg sample for Fall17.
-  // See distribution in /uscms_data/d3/jmanagan/EffsAndNewWeights/TagEffsS18/BCLEffLoose.png
+  // Efficiencies from TTToSemiLeptonic powheg sample for Fall18 (?).
+  // ~jmanagan/nobackup/EffsAndNegWeights/NegWeights2018/TTSemiLep.root
   // Uses hadronFlavour() rather than partonFlavour() as recommended in BTV physics plenary CMS Week 10/2015
+  // BEff_Nptbins_b/BEff_Dptbins_b
+  // [0.403823, 0.618852, 0.679287, 0.706293, 0.717887, 0.713093, 0.670051, 0.59587, 0.531372, 0.483849, 0.417429, 0.30052, 0.20051, 0.124058]
+  // BEffLoose_Nptbins_b/BEffLoose_Dptbins_b
+  // [0.628235, 0.794337, 0.839644, 0.863855, 0.878786, 0.88415, 0.872817, 0.850809, 0.834119, 0.824796, 0.802984, 0.751513, 0.684949, 0.598841]
 
   if(tagger == "DeepCSVMEDIUM" or tagger == "SJDeepCSVMEDIUM"){
-    if(pt < 30)        return 0.447390; //0.331971;
-    else if(pt < 50)   return 0.652679; //0.550937;
-    else if(pt < 70)   return 0.704724; //0.599929;
-    else if(pt < 100)  return 0.727924; //0.624677;
-    else if(pt < 140)  return 0.737712; //0.635101;
-    else if(pt < 200)  return 0.731578; //0.632463;
-    else if(pt < 300)  return 0.689644; //0.598059;
-    else if(pt < 400)  return 0.615546; //0.558359;
-    else if(pt < 500)  return 0.552437; //0.514297;
-    else if(pt < 600)  return 0.501756; //0.494422;
-    else if(pt < 800)  return 0.433998; //0.474555;
-    else if(pt < 1000) return 0.318242; //0.451810;
-    else if(pt < 1200) return 0.220351; //0.427328;
-    else               return 0.140777; //0.414162;
+     if(pt < 30)        return 0.403823;
+     else if(pt < 50)   return 0.618852;
+     else if(pt < 70)   return 0.679287;
+     else if(pt < 100)  return 0.706293;
+     else if(pt < 140)  return 0.717887;
+     else if(pt < 200)  return 0.713093;
+     else if(pt < 300)  return 0.670051;
+     else if(pt < 400)  return 0.59587;
+     else if(pt < 500)  return 0.531372;
+     else if(pt < 600)  return 0.483849;
+     else if(pt < 800)  return 0.417429;
+     else if(pt < 1000) return 0.30052;
+     else if(pt < 1200) return 0.20051;
+     else               return 0.124058;
   }
   else if( tagger == "DeepCSVLOOSE" or tagger == "SJDeepCSVLOOSE") {
-    if(pt < 30)        return 0.665838; //0.531941;
-    else if(pt < 50)   return 0.818215; //0.731394;
-    else if(pt < 70)   return 0.856991; //0.777463;
-    else if(pt < 100)  return 0.878542; //0.802409;
-    else if(pt < 140)  return 0.892642; //0.815819;
-    else if(pt < 200)  return 0.898174; //0.823917;
-    else if(pt < 300)  return 0.888097; //0.813134;
-    else if(pt < 400)  return 0.866256; //0.798508;
-    else if(pt < 500)  return 0.850732; //0.789124;
-    else if(pt < 600)  return 0.837788; //0.783070;
-    else if(pt < 800)  return 0.819362; //0.781245;
-    else if(pt < 1000) return 0.769139; //0.766063;
-    else if(pt < 1200) return 0.702670; //0.762402;
-    else               return 0.609493; //0.745491;
+     if(pt < 30)        return 0.628235;
+     else if(pt < 50)   return 0.794337;
+     else if(pt < 70)   return 0.839644;
+     else if(pt < 100)  return 0.863855;
+     else if(pt < 140)  return 0.878786;
+     else if(pt < 200)  return 0.88415;
+     else if(pt < 300)  return 0.872817;
+     else if(pt < 400)  return 0.850809;
+     else if(pt < 500)  return 0.834119;
+     else if(pt < 600)  return 0.824796;
+     else if(pt < 800)  return 0.802984;
+     else if(pt < 1000) return 0.751513;
+     else if(pt < 1200) return 0.684949;
+     else               return 0.598841;
   }			      
   
   
@@ -107,41 +111,42 @@ double BtagHardcodedConditions::GetBtagEfficiency(double pt, double eta, std::st
 
 double BtagHardcodedConditions::GetCtagEfficiency(double pt, double eta, std::string tagger)
 {
-  // Charm mistag rates from TTToSemiLeptonic powheg sample for Fall17.
-  // See distribution in /uscms_data/d3/jmanagan/EffsAndNewWeights/TagEffsS18/BCLEffLoose.png
-  // Uses hadronFlavour() rather than partonFlavour() as recommended in BTV physics plenary CMS Week 10/2015
+  // BEff_Nptbins_c/BEff_Dptbins_c
+  // [0.055637, 0.089934, 0.09309, 0.099994, 0.108785, 0.114926, 0.110015, 0.093696, 0.087263, 0.068838, 0.047241, 0.022655, 0.015532, 0.008043]
+  // BEffLoose_Nptbins_c/BEffLoose_Dptbins_c
+  // [0.255572, 0.362164, 0.376513, 0.392257, 0.408828, 0.419713, 0.410212, 0.39379, 0.408445, 0.391614, 0.354956, 0.318908, 0.27957, 0.243968]
 
   if(tagger == "DeepCSVMEDIUM" or tagger == "SJDeepCSVMEDIUM"){
-    if(pt < 30)        return 0.070384; //0.057985;
-    else if(pt < 50)   return 0.107334; //0.111536;
-    else if(pt < 70)   return 0.111125; //0.112216;
-    else if(pt < 100)  return 0.119346; //0.120075;
-    else if(pt < 140)  return 0.128583; //0.128499;
-    else if(pt < 200)  return 0.134354; //0.132918;
-    else if(pt < 300)  return 0.127251; //0.126724;
-    else if(pt < 400)  return 0.107927; //0.126281;
-    else if(pt < 500)  return 0.099135; //0.123026;
-    else if(pt < 600)  return 0.081601; //0.124840;
-    else if(pt < 800)  return 0.056054; //0.130060;
-    else if(pt < 1000) return 0.032320; //0.128022;
-    else if(pt < 1200) return 0.014388; //0.134100;
-    else               return 0.012887; //0.125348;
+     if(pt < 30)        return 0.055637;
+     else if(pt < 50)   return 0.089934;
+     else if(pt < 70)   return 0.09309;
+     else if(pt < 100)  return 0.099994;
+     else if(pt < 140)  return 0.108785;
+     else if(pt < 200)  return 0.114926;
+     else if(pt < 300)  return 0.110015;
+     else if(pt < 400)  return 0.093696;
+     else if(pt < 500)  return 0.087263;
+     else if(pt < 600)  return 0.068838;
+     else if(pt < 800)  return 0.047241;
+     else if(pt < 1000) return 0.022655;
+     else if(pt < 1200) return 0.015532;
+     else               return 0.008043;
   }
   else if( tagger == "DeepCSVLOOSE" or tagger == "SJDeepCSVLOOSE") {
-    if(pt < 30)        return 0.288516; //0.206192;
-    else if(pt < 50)   return 0.408332; //0.338902;
-    else if(pt < 70)   return 0.422585; //0.353516;
-    else if(pt < 100)  return 0.438211; //0.366214;
-    else if(pt < 140)  return 0.454386; //0.371430;
-    else if(pt < 200)  return 0.464604; //0.381838;
-    else if(pt < 300)  return 0.453372; //0.374189;
-    else if(pt < 400)  return 0.434347; //0.379317;
-    else if(pt < 500)  return 0.443035; //0.393696;
-    else if(pt < 600)  return 0.419901; //0.404215;
-    else if(pt < 800)  return 0.390432; //0.417190;
-    else if(pt < 1000) return 0.337017; //0.422815;
-    else if(pt < 1200) return 0.267386; //0.402299;
-    else               return 0.275773; //0.401114;
+     if(pt < 30)        return 0.255572;
+     else if(pt < 50)   return 0.362164;
+     else if(pt < 70)   return 0.376513;
+     else if(pt < 100)  return 0.392257;
+     else if(pt < 140)  return 0.408828;
+     else if(pt < 200)  return 0.419713;
+     else if(pt < 300)  return 0.410212;
+     else if(pt < 400)  return 0.39379;
+     else if(pt < 500)  return 0.408445;
+     else if(pt < 600)  return 0.391614;
+     else if(pt < 800)  return 0.354956;
+     else if(pt < 1000) return 0.318908;
+     else if(pt < 1200) return 0.27957;
+     else               return 0.243968;
   }else{
     std::cerr << "Tagger " << tagger << " not coded into GetCtagEfficiency!" << std::endl;
     return 0;
@@ -150,41 +155,42 @@ double BtagHardcodedConditions::GetCtagEfficiency(double pt, double eta, std::st
 
 double BtagHardcodedConditions::GetMistagRate(double pt, double eta, std::string tagger)
 {
-  // Mistag rates from TTToSemiLeptonic powheg sample for Fall17.
-  // See distribution in /uscms_data/d3/jmanagan/EffsAndNewWeights/TagEffsS18/BCLEffLoose.png
-  // Uses hadronFlavour() rather than partonFlavour() as recommended in BTV physics plenary CMS Week 10/2015
+  // BEff_Nptbins_udsg/BEff_Dptbins_udsg
+  // [0.00308, 0.007497, 0.006558, 0.006771, 0.00761, 0.008422, 0.009002, 0.00957, 0.010041, 0.00947, 0.007225, 0.00395, 0.002117, 0.001617]
+  // BEffLoose_Nptbins_udsg/BEffLoose_Dptbins_udsg
+  // [0.086838, 0.090621, 0.078963, 0.081875, 0.091066, 0.102062, 0.114996, 0.127951, 0.142193, 0.149584, 0.153378, 0.152735, 0.141539, 0.124475]
 
   if(tagger == "DeepCSVMEDIUM" || tagger == "SJDeepCSVMEDIUM"){
-    if(pt < 30)        return 0.004377; //0.003385;
-    else if(pt < 50)   return 0.010659; //0.009673;
-    else if(pt < 70)   return 0.009622; //0.008316;
-    else if(pt < 100)  return 0.009726; //0.008524;
-    else if(pt < 140)  return 0.010565; //0.009092;
-    else if(pt < 200)  return 0.011395; //0.011431;
-    else if(pt < 300)  return 0.011618; //0.013666;
-    else if(pt < 400)  return 0.011412; //0.020405;
-    else if(pt < 500)  return 0.011566; //0.023609;
-    else if(pt < 600)  return 0.010326; //0.025348;
-    else if(pt < 800)  return 0.007474; //0.028858;
-    else if(pt < 1000) return 0.005215; //0.030427;
-    else if(pt < 1200) return 0.001746; //0.034091;
-    else               return 0.001182; //0.047619;
+     if(pt < 30)        return 0.00308;
+     else if(pt < 50)   return 0.007497;
+     else if(pt < 70)   return 0.006558;
+     else if(pt < 100)  return 0.006771;
+     else if(pt < 140)  return 0.00761;
+     else if(pt < 200)  return 0.008422;
+     else if(pt < 300)  return 0.009002;
+     else if(pt < 400)  return 0.00957;
+     else if(pt < 500)  return 0.010041;
+     else if(pt < 600)  return 0.00947;
+     else if(pt < 800)  return 0.007225;
+     else if(pt < 1000) return 0.00395;
+     else if(pt < 1200) return 0.002117;
+     else               return 0.001617;
   }
   else if( tagger == "DeepCSVLOOSE" || tagger == "SJDeepCSVLOOSE") {
-    if(pt < 30)        return 0.076955; //0.068717;
-    else if(pt < 50)   return 0.104639; //0.095095;
-    else if(pt < 70)   return 0.099754; //0.083338;
-    else if(pt < 100)  return 0.103881; //0.085001;
-    else if(pt < 140)  return 0.113770; //0.086867;
-    else if(pt < 200)  return 0.126487; //0.101223;
-    else if(pt < 300)  return 0.139755; //0.114555;
-    else if(pt < 400)  return 0.149181; //0.139321;
-    else if(pt < 500)  return 0.158620; //0.155025;
-    else if(pt < 600)  return 0.161799; //0.167581;
-    else if(pt < 800)  return 0.161169; //0.189058;
-    else if(pt < 1000) return 0.159885; //0.203596;
-    else if(pt < 1200) return 0.143730; //0.206650;
-    else               return 0.131501; //0.243775;
+     if(pt < 30)        return 0.086838;
+     else if(pt < 50)   return 0.090621;
+     else if(pt < 70)   return 0.078963;
+     else if(pt < 100)  return 0.081875;
+     else if(pt < 140)  return 0.091066;
+     else if(pt < 200)  return 0.102062;
+     else if(pt < 300)  return 0.114996;
+     else if(pt < 400)  return 0.127951;
+     else if(pt < 500)  return 0.142193;
+     else if(pt < 600)  return 0.149584;
+     else if(pt < 800)  return 0.153378;
+     else if(pt < 1000) return 0.152735;
+     else if(pt < 1200) return 0.141539;
+     else               return 0.124475;
   }
   else{
     std::cerr << "Tagger " << tagger << " not coded into MistagRate!" << std::endl;
