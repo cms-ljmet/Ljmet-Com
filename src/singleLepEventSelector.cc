@@ -473,18 +473,22 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         if ( considerCut("Primary vertex") ) {
             if (mbPar["debug"]) std::cout<<"pv cuts..."<<std::endl;
 
+	    //	    std::cout << "SLES L476: calling pvSel" << std::endl;
             if ( (*pvSel_)(event) ){
                 passCut(ret, "Primary vertex"); // PV cuts total
             }
             else break;
 
+	    //	    std::cout << "SLES L482: opening pv_collection" << std::endl;
             event.getByLabel( mtPar["pv_collection"], h_primVtx );
+	    //	    std::cout << "SLES L484: got pv_collection" << std::endl;
             int _n_pvs = 0;
             for (std::vector<reco::Vertex>::const_iterator _ipv = h_primVtx->begin();
                  _ipv != h_primVtx->end(); ++_ipv){
-                mvSelPVs.push_back(edm::Ptr<reco::Vertex>(h_primVtx, _n_pvs));
-                ++_n_pvs;
+	      mvSelPVs.push_back(edm::Ptr<reco::Vertex>(h_primVtx, _n_pvs));
+	      ++_n_pvs;
             }
+	    //	    std::cout << "SLES L492: got past pv loop" << std::endl;
         } // end of PV cuts
 
 
@@ -526,11 +530,13 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	    eebadcalibpass = *passecalBadCalibFilterUpdate;
 	  }
 	  
-	  if(hbhenoisepass && hbhenoiseisopass && globaltighthalopass && ecaldeadcellpass && (mbPar["isMc"] || eebadscpass) && goodvertpass && badpfmuonpass && badchargedcandpass && eebadcalibpass){
+	  if(hbhenoisepass && hbhenoiseisopass && globaltighthalopass && ecaldeadcellpass && (mbPar["isMc"] || eebadscpass) && goodvertpass && badpfmuonpass && eebadcalibpass){
+	    //badchargedcandpass && // removed based on new recommendation spring 2019
 	    passCut(ret, "MET filters");
 	  }
 	  else break;
 	}
+	//	std::cout << "SLES L541: done with met filters" << std::endl;
 
         //======================================================
         //
@@ -538,11 +544,23 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         //      
         // loop over muons
 
-	//get muons and packed pfcandidates
-	event.getByLabel( mtPar["muon_collection"], mhMuons );      
-	edm::Handle<pat::PackedCandidateCollection> packedPFCands;
-	edm::InputTag packedPFCandsLabel_("packedPFCandidates");
-	event.getByLabel(packedPFCandsLabel_, packedPFCands);
+	//packed pf candidates and rho source needed miniIso
+	edm::InputTag packedPFCandsLabel_ = edm::InputTag("packedPFCandidates");
+	edm::Handle<std::vector<pat::PackedCandidate>> packedPFCands;	
+	//	std::cout << "SLES L565: getting candidates " << std::endl;	      
+	try{
+	  event.getByLabel(packedPFCandsLabel_, packedPFCands);
+	}catch(int except){
+	  std::cout << "Caught exception error " << except << std::endl;
+	  break;
+	}
+
+	//	std::cout << "SLES L565: got pf candidates" << std::endl;
+	//rho isolation from susy recommendation
+	edm::Handle<double> rhoJetsNC;
+	event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
+	double myRhoJetsNC = *rhoJetsNC;
+	//	std::cout << "SLES L573: got rho" << std::endl;
 
         int _n_muons  = 0;
         int nSelMuons = 0;
@@ -553,17 +571,10 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 
             //get muons
             event.getByLabel( mtPar["muon_collection"], mhMuons );      
+	    //	    std::cout << "SLES L563: got muons" << std::endl;
 
             mvSelMuons.clear();
-	    mvLooseMuons.clear();
-	    //packed pf candidates and rho source needed miniIso
-	    edm::Handle<pat::PackedCandidateCollection> packedPFCands;
-	    edm::InputTag packedPFCandsLabel_("packedPFCandidates");
-	    event.getByLabel(packedPFCandsLabel_, packedPFCands);
-	    //rho isolation from susy recommendation
-	    edm::Handle<double> rhoJetsNC;
-	    event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
-	    double myRhoJetsNC = *rhoJetsNC;
+	    mvLooseMuons.clear();		      
 
             for (std::vector<pat::Muon>::const_iterator _imu = mhMuons->begin(); _imu != mhMuons->end(); _imu++){
 	      bool pass = false;
@@ -582,7 +593,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 		double nhIso = (*_imu).pfIsolationR04().sumNeutralHadronEt;
 		double gIso  = (*_imu).pfIsolationR04().sumPhotonEt;
 		double puIso = (*_imu).pfIsolationR04().sumPUPt;
-		
+
 		double pt    = (*_imu).pt() ;
 
 		double pfIso = (chIso + std::max(0.,nhIso + gIso - 0.5*puIso))/pt;
@@ -638,11 +649,11 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 		  double gIso  = (*_imu).pfIsolationR04().sumPhotonEt;
 		  double puIso = (*_imu).pfIsolationR04().sumPUPt;
 		  double pt    = (*_imu).pt() ;
-		  
+
 		  double pfIso = (chIso + std::max(0.,nhIso + gIso - 0.5*puIso))/pt;
 		  
 		  if (!mbPar["muon_useMiniIso"] && pfIso<mdPar["loose_muon_reliso"] ) {}
-		  else if (mbPar["muon_useMiniIso"] && (*_imu).passed(reco::Muon::MiniIsoLoose) ) {}
+		  else if (mbPar["muon_useMiniIso"] && (*_imu).passed(reco::Muon::MiniIsoMedium) ) {}
 		  else{ break;}
 		  
 		  if (mvSelPVs.size() > 0){
@@ -672,7 +683,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             } // end of the muon loop
 
         } // end of muon cuts
-        if (mbPar["debug"]) std::cout<<"finish muon cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish muon cuts..."<<std::endl;
 
         //
         //_____ Electron cuts __________________________________
@@ -687,17 +698,21 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         if ( mbPar["electron_cuts"] ) {
             //get electrons
             event.getByLabel( mtPar["electron_collection"], mhElectrons );
+	    //	    std::cout << "SLES L711: got electrons" << std::endl;
 
             mvSelElectrons.clear();
 	    mvLooseElectrons.clear();
+	    //	    std::cout << "SLES L714: getting candidates " << std::endl;	      
 	    //packed pf candidates and rho source needed miniIso
-	    edm::Handle<pat::PackedCandidateCollection> packedPFCands;
-	    edm::InputTag packedPFCandsLabel_("packedPFCandidates");
-	    event.getByLabel(packedPFCandsLabel_, packedPFCands);
-	    //rho isolation from susy recommendation
-	    edm::Handle<double> rhoJetsNC;
-	    event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
-	    double myRhoJetsNC = *rhoJetsNC;
+	    // edm::Handle<pat::PackedCandidateCollection> packedPFCands;
+	    // edm::InputTag packedPFCandsLabel_("packedPFCandidates");
+	    // event.getByLabel(packedPFCandsLabel_, packedPFCands);
+	    // std::cout << "SLES L714: got candidates " << std::endl;	      
+	    // //rho isolation from susy recommendation
+	    // edm::Handle<double> rhoJetsNC;
+	    // event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
+	    // double myRhoJetsNC = *rhoJetsNC;
+	    // std::cout << "SLES L724: got rho " << std::endl;	      
 
 	    size_t j = 0;
             for (std::vector<pat::Electron>::const_iterator _iel = mhElectrons->begin(); _iel != mhElectrons->end(); _iel++){
@@ -848,7 +863,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	  }
 	  //	}	  
 	}
-        if (mbPar["debug"]) std::cout<<"finish tau cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish tau cuts..."<<std::endl;
         
 	//
         // jet loop
@@ -1075,6 +1090,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             ++_n_jets; 
       
         } // end of loop over jets
+	//	std::cout << "Done with AK4 cleaning" << std::endl;
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	// AK8 jets
@@ -1237,7 +1253,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             ++_n_jets_AK8; 
       
         } // end of loop over AK8 jets
-
+	//	std::cout << "Done with AK8 cleaning" << std::endl;
 
         //
         if ( mbPar["jet_cuts"] ) {
@@ -1260,7 +1276,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             else break;
 
         } // end of jet cuts
-        if (mbPar["debug"]) std::cout<<"finish jet cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish jet cuts..."<<std::endl;
 
         //
         //_____ MET cuts __________________________________
@@ -1285,7 +1301,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 
             }
         } // end of MET cuts
-        if (mbPar["debug"]) std::cout<<"finish met cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish met cuts..."<<std::endl;
 
 	//
 	//_____ Lepton cuts ________________________________
@@ -1319,7 +1335,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         if( _n_taus == 0 || !mbPar["tau_veto"]) passCut(ret, "Tau veto");
         else break;
         
-        if (mbPar["debug"]) std::cout<<"finish lepton cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish lepton cuts..."<<std::endl;
     
         //
         //_____ Btagging cuts _____________________
