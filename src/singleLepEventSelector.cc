@@ -482,8 +482,8 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             int _n_pvs = 0;
             for (std::vector<reco::Vertex>::const_iterator _ipv = h_primVtx->begin();
                  _ipv != h_primVtx->end(); ++_ipv){
-                mvSelPVs.push_back(edm::Ptr<reco::Vertex>(h_primVtx, _n_pvs));
-                ++_n_pvs;
+	      mvSelPVs.push_back(edm::Ptr<reco::Vertex>(h_primVtx, _n_pvs));
+	      ++_n_pvs;
             }
         } // end of PV cuts
 
@@ -526,7 +526,8 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	    eebadcalibpass = *passecalBadCalibFilterUpdate;
 	  }
 	  
-	  if(hbhenoisepass && hbhenoiseisopass && globaltighthalopass && ecaldeadcellpass && (mbPar["isMc"] || eebadscpass) && goodvertpass && badpfmuonpass && badchargedcandpass && eebadcalibpass){
+	  if(hbhenoisepass && hbhenoiseisopass && globaltighthalopass && ecaldeadcellpass && (mbPar["isMc"] || eebadscpass) && goodvertpass && badpfmuonpass && eebadcalibpass){
+	    //badchargedcandpass && // removed based on new recommendation spring 2019
 	    passCut(ret, "MET filters");
 	  }
 	  else break;
@@ -538,11 +539,20 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         //      
         // loop over muons
 
-	//get muons and packed pfcandidates
-	event.getByLabel( mtPar["muon_collection"], mhMuons );      
-	edm::Handle<pat::PackedCandidateCollection> packedPFCands;
-	edm::InputTag packedPFCandsLabel_("packedPFCandidates");
-	event.getByLabel(packedPFCandsLabel_, packedPFCands);
+	//packed pf candidates and rho source needed miniIso
+	edm::InputTag packedPFCandsLabel_ = edm::InputTag("packedPFCandidates");
+	edm::Handle<std::vector<pat::PackedCandidate>> packedPFCands;	
+	try{
+	  event.getByLabel(packedPFCandsLabel_, packedPFCands);
+	}catch(int except){
+	  std::cout << "Caught exception error " << except << std::endl;
+	  break;
+	}
+
+	//rho isolation from susy recommendation
+	edm::Handle<double> rhoJetsNC;
+	event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
+	double myRhoJetsNC = *rhoJetsNC;
 
         int _n_muons  = 0;
         int nSelMuons = 0;
@@ -555,15 +565,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             event.getByLabel( mtPar["muon_collection"], mhMuons );      
 
             mvSelMuons.clear();
-	    mvLooseMuons.clear();
-	    //packed pf candidates and rho source needed miniIso
-	    edm::Handle<pat::PackedCandidateCollection> packedPFCands;
-	    edm::InputTag packedPFCandsLabel_("packedPFCandidates");
-	    event.getByLabel(packedPFCandsLabel_, packedPFCands);
-	    //rho isolation from susy recommendation
-	    edm::Handle<double> rhoJetsNC;
-	    event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
-	    double myRhoJetsNC = *rhoJetsNC;
+	    mvLooseMuons.clear();		      
 
             for (std::vector<pat::Muon>::const_iterator _imu = mhMuons->begin(); _imu != mhMuons->end(); _imu++){
 	      bool pass = false;
@@ -582,7 +584,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 		double nhIso = (*_imu).pfIsolationR04().sumNeutralHadronEt;
 		double gIso  = (*_imu).pfIsolationR04().sumPhotonEt;
 		double puIso = (*_imu).pfIsolationR04().sumPUPt;
-		
+
 		double pt    = (*_imu).pt() ;
 
 		double pfIso = (chIso + std::max(0.,nhIso + gIso - 0.5*puIso))/pt;
@@ -638,7 +640,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 		  double gIso  = (*_imu).pfIsolationR04().sumPhotonEt;
 		  double puIso = (*_imu).pfIsolationR04().sumPUPt;
 		  double pt    = (*_imu).pt() ;
-		  
+
 		  double pfIso = (chIso + std::max(0.,nhIso + gIso - 0.5*puIso))/pt;
 		  
 		  if (!mbPar["muon_useMiniIso"] && pfIso<mdPar["loose_muon_reliso"] ) {}
@@ -672,7 +674,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             } // end of the muon loop
 
         } // end of muon cuts
-        if (mbPar["debug"]) std::cout<<"finish muon cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish muon cuts..."<<std::endl;
 
         //
         //_____ Electron cuts __________________________________
@@ -691,13 +693,13 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             mvSelElectrons.clear();
 	    mvLooseElectrons.clear();
 	    //packed pf candidates and rho source needed miniIso
-	    edm::Handle<pat::PackedCandidateCollection> packedPFCands;
-	    edm::InputTag packedPFCandsLabel_("packedPFCandidates");
-	    event.getByLabel(packedPFCandsLabel_, packedPFCands);
-	    //rho isolation from susy recommendation
-	    edm::Handle<double> rhoJetsNC;
-	    event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
-	    double myRhoJetsNC = *rhoJetsNC;
+	    // edm::Handle<pat::PackedCandidateCollection> packedPFCands;
+	    // edm::InputTag packedPFCandsLabel_("packedPFCandidates");
+	    // event.getByLabel(packedPFCandsLabel_, packedPFCands);
+	    // //rho isolation from susy recommendation
+	    // edm::Handle<double> rhoJetsNC;
+	    // event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
+	    // double myRhoJetsNC = *rhoJetsNC;
 
 	    size_t j = 0;
             for (std::vector<pat::Electron>::const_iterator _iel = mhElectrons->begin(); _iel != mhElectrons->end(); _iel++){
@@ -848,7 +850,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	  }
 	  //	}	  
 	}
-        if (mbPar["debug"]) std::cout<<"finish tau cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish tau cuts..."<<std::endl;
         
 	//
         // jet loop
@@ -1075,6 +1077,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             ++_n_jets; 
       
         } // end of loop over jets
+	//	std::cout << "Done with AK4 cleaning" << std::endl;
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	// AK8 jets
@@ -1237,7 +1240,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             ++_n_jets_AK8; 
       
         } // end of loop over AK8 jets
-
+	//	std::cout << "Done with AK8 cleaning" << std::endl;
 
         //
         if ( mbPar["jet_cuts"] ) {
@@ -1260,7 +1263,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
             else break;
 
         } // end of jet cuts
-        if (mbPar["debug"]) std::cout<<"finish jet cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish jet cuts..."<<std::endl;
 
         //
         //_____ MET cuts __________________________________
@@ -1285,7 +1288,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 
             }
         } // end of MET cuts
-        if (mbPar["debug"]) std::cout<<"finish met cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish met cuts..."<<std::endl;
 
 	//
 	//_____ Lepton cuts ________________________________
@@ -1319,7 +1322,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         if( _n_taus == 0 || !mbPar["tau_veto"]) passCut(ret, "Tau veto");
         else break;
         
-        if (mbPar["debug"]) std::cout<<"finish lepton cuts..."<<std::endl;
+        if (mbPar["debug"]) 	std::cout<<"finish lepton cuts..."<<std::endl;
     
         //
         //_____ Btagging cuts _____________________

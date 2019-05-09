@@ -79,4 +79,4 @@ do
   rm ${FILE}
 done
 
-
+rm core.*
