@@ -473,22 +473,18 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         if ( considerCut("Primary vertex") ) {
             if (mbPar["debug"]) std::cout<<"pv cuts..."<<std::endl;
 
-	    //	    std::cout << "SLES L476: calling pvSel" << std::endl;
             if ( (*pvSel_)(event) ){
                 passCut(ret, "Primary vertex"); // PV cuts total
             }
             else break;
 
-	    //	    std::cout << "SLES L482: opening pv_collection" << std::endl;
             event.getByLabel( mtPar["pv_collection"], h_primVtx );
-	    //	    std::cout << "SLES L484: got pv_collection" << std::endl;
             int _n_pvs = 0;
             for (std::vector<reco::Vertex>::const_iterator _ipv = h_primVtx->begin();
                  _ipv != h_primVtx->end(); ++_ipv){
 	      mvSelPVs.push_back(edm::Ptr<reco::Vertex>(h_primVtx, _n_pvs));
 	      ++_n_pvs;
             }
-	    //	    std::cout << "SLES L492: got past pv loop" << std::endl;
         } // end of PV cuts
 
 
@@ -536,7 +532,6 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	  }
 	  else break;
 	}
-	//	std::cout << "SLES L541: done with met filters" << std::endl;
 
         //======================================================
         //
@@ -547,7 +542,6 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	//packed pf candidates and rho source needed miniIso
 	edm::InputTag packedPFCandsLabel_ = edm::InputTag("packedPFCandidates");
 	edm::Handle<std::vector<pat::PackedCandidate>> packedPFCands;	
-	//	std::cout << "SLES L565: getting candidates " << std::endl;	      
 	try{
 	  event.getByLabel(packedPFCandsLabel_, packedPFCands);
 	}catch(int except){
@@ -555,12 +549,10 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 	  break;
 	}
 
-	//	std::cout << "SLES L565: got pf candidates" << std::endl;
 	//rho isolation from susy recommendation
 	edm::Handle<double> rhoJetsNC;
 	event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
 	double myRhoJetsNC = *rhoJetsNC;
-	//	std::cout << "SLES L573: got rho" << std::endl;
 
         int _n_muons  = 0;
         int nSelMuons = 0;
@@ -571,7 +563,6 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 
             //get muons
             event.getByLabel( mtPar["muon_collection"], mhMuons );      
-	    //	    std::cout << "SLES L563: got muons" << std::endl;
 
             mvSelMuons.clear();
 	    mvLooseMuons.clear();		      
@@ -653,7 +644,7 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
 		  double pfIso = (chIso + std::max(0.,nhIso + gIso - 0.5*puIso))/pt;
 		  
 		  if (!mbPar["muon_useMiniIso"] && pfIso<mdPar["loose_muon_reliso"] ) {}
-		  else if (mbPar["muon_useMiniIso"] && (*_imu).passed(reco::Muon::MiniIsoMedium) ) {}
+		  else if (mbPar["muon_useMiniIso"] && (*_imu).passed(reco::Muon::MiniIsoLoose) ) {}
 		  else{ break;}
 		  
 		  if (mvSelPVs.size() > 0){
@@ -698,21 +689,17 @@ bool singleLepEventSelector::operator()( edm::EventBase const & event, pat::strb
         if ( mbPar["electron_cuts"] ) {
             //get electrons
             event.getByLabel( mtPar["electron_collection"], mhElectrons );
-	    //	    std::cout << "SLES L711: got electrons" << std::endl;
 
             mvSelElectrons.clear();
 	    mvLooseElectrons.clear();
-	    //	    std::cout << "SLES L714: getting candidates " << std::endl;	      
 	    //packed pf candidates and rho source needed miniIso
 	    // edm::Handle<pat::PackedCandidateCollection> packedPFCands;
 	    // edm::InputTag packedPFCandsLabel_("packedPFCandidates");
 	    // event.getByLabel(packedPFCandsLabel_, packedPFCands);
-	    // std::cout << "SLES L714: got candidates " << std::endl;	      
 	    // //rho isolation from susy recommendation
 	    // edm::Handle<double> rhoJetsNC;
 	    // event.getByLabel(edm::InputTag("fixedGridRhoFastjetCentralNeutral","") , rhoJetsNC);
 	    // double myRhoJetsNC = *rhoJetsNC;
-	    // std::cout << "SLES L724: got rho " << std::endl;	      
 
 	    size_t j = 0;
             for (std::vector<pat::Electron>::const_iterator _iel = mhElectrons->begin(); _iel != mhElectrons->end(); _iel++){
