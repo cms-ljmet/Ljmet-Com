@@ -57,6 +57,9 @@ cmsRun producer_${PREFIX}_${JOBID}.py
 echo "Sleeping for one minute..."
 sleep 60
 
+echo "Setting new PDFSET path"
+export LHAPDF_DATA_PATH="/cvmfs/cms.cern.ch/lhapdf/pdfsets/current/":${LHAPDF_DATA_PATH}
+
 echo "Running ljmet"
 sed -i "s|CONDOR_RELBASE|$PWD/$INPUTTAR|" ${PREFIX}_${JOBID}.py
 ljmet ${PREFIX}_${JOBID}.py
