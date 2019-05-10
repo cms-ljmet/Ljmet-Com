@@ -46,6 +46,7 @@ process.singleLepCalc.UseElIDV1         = cms.bool(False)
 process.singleLepCalc.saveLooseLeps     = cms.bool(False)
 process.singleLepCalc.saveGenHT     = cms.bool(SAVEGENHT)
 process.singleLepCalc.OverrideLHEWeights = cms.bool(NEWPDF)
+process.singleLepCalc.newPDFname = cms.string("NNPDF31_nnlo_as_0118_nf_4_mc_hessian")
 process.singleLepCalc.triggerCollection = cms.InputTag("TriggerResults::HLT")
 
 # Jet substructure calculator options
